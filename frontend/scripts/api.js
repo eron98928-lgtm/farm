@@ -1,5 +1,7 @@
 // Cliente de API — conecta o frontend ao backend tRPC
-const API_URL = 'http://localhost:3001/api/trpc';
+const API_URL = window.location.hostname === 'localhost'
+  ? 'http://localhost:3001/api/trpc'
+  : '/api/trpc';
 
 // Pega token do Clerk (live) ou do localStorage (fallback)
 async function getAuthToken() {

@@ -9,14 +9,13 @@ import { initSentry, captureException } from "./_core/sentry.js";
 import { createContext } from "./_core/trpc.js";
 import { appRouter } from "./routers/index.js";
 
-const app = express();
+export const app = express();
 const PORT = process.env.PORT ?? 3001;
 
-// Sentry deve ser inicializado com o app antes das rotas
 initSentry(app);
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL ?? "http://localhost:3000",
+  origin: process.env.FRONTEND_URL ?? "*",
   credentials: true,
 }));
 
@@ -37,13 +36,15 @@ app.get("/health", (_req, res) => {
   res.json({ status: "ok", timestamp: new Date().toISOString() });
 });
 
-// Handler global de erros não capturados
 app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
   captureException(err);
   res.status(500).json({ error: "Erro interno do servidor." });
 });
 
-app.listen(PORT, () => {
-  console.log(`Servidor rodando em http://localhost:${PORT}`);
-  console.log(`Ambiente: ${process.env.NODE_ENV ?? "development"}`);
-});
+// Sobe servidor local apenas fora da Vercel
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`Servidor rodando em http://localhost:${PORT}`);
+    console.log(`Ambiente: ${process.env.NODE_ENV ?? "development"}`);
+  });
+}

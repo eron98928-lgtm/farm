@@ -1,0 +1,8 @@
+﻿{
+  "name": "mangareader",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "vercel-build": "cd backend && npm install"
+  }
+}
