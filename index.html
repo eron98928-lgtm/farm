@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MangaReader - Leia seus Mangás Favoritos</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="logo">
+                <h1><i class="fas fa-book-open"></i> MangaReader</h1>
+            </div>
+            <nav class="nav">
+                <a href="index.html" class="active">Início</a>
+                <a href="#">Populares</a>
+                <a href="#">Lançamentos</a>
+                <a href="#">Gêneros</a>
+                <a href="premium.html" class="premium-link"><i class="fas fa-crown"></i> Premium</a>
+            </nav>
+            <div class="header-actions">
+                <div class="search-box">
+                    <input type="text" placeholder="Buscar mangá...">
+                    <button><i class="fas fa-search"></i></button>
+                </div>
+                <div class="user-actions">
+                    <a href="login.html" class="btn-login">Entrar</a>
+                    <a href="login.html?register=true" class="btn-register">Registrar</a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h2>Bem-vindo ao MangaReader</h2>
+                <p>A melhor plataforma para ler seus mangás favoritos online!</p>
+                <div class="hero-buttons">
+                    <a href="#" class="btn-primary">Começar a Ler</a>
+                    <a href="premium.html" class="btn-secondary">Seja Premium</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Featured Manga -->
+    <section class="featured">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-star"></i> Destaques da Semana</h2>
+            <div class="manga-grid">
+                <!-- Manga Card 1 -->
+                <div class="manga-card featured-card">
+                    <div class="manga-cover">
+                        <img src="https://via.placeholder.com/300x450/667eea/ffffff?text=One+Piece" alt="One Piece">
+                        <span class="badge hot">Quente</span>
+                    </div>
+                    <div class="manga-info">
+                        <h3>One Piece</h3>
+                        <p class="genre">Ação, Aventura, Fantasia</p>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>4.8</span>
+                        </div>
+                        <p class="chapter">Capítulo 1098</p>
+                    </div>
+                </div>
+
+                <!-- Manga Card 2 -->
+                <div class="manga-card featured-card">
+                    <div class="manga-cover">
+                        <img src="https://via.placeholder.com/300x450/f093fb/ffffff?text=Jujutsu+Kaisen" alt="Jujutsu Kaisen">
+                        <span class="badge new">Novo</span>
+                    </div>
+                    <div class="manga-info">
+                        <h3>Jujutsu Kaisen</h3>
+                        <p class="genre">Ação, Sobrenatural</p>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <span>4.9</span>
+                        </div>
+                        <p class="chapter">Capítulo 245</p>
+                    </div>
+                </div>
+
+                <!-- Manga Card 3 -->
+                <div class="manga-card featured-card">
+                    <div class="manga-cover">
+                        <img src="https://via.placeholder.com/300x450/4facfe/ffffff?text=Demon+Slayer" alt="Demon Slayer">
+                    </div>
+                    <div class="manga-info">
+                        <h3>Demon Slayer</h3>
+                        <p class="genre">Ação, Histórico</p>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="far fa-star"></i>
+                            <span>4.5</span>
+                        </div>
+                        <p class="chapter">Capítulo 205 (Completo)</p>
+                    </div>
+                </div>
+
+                <!-- Manga Card 4 -->
+                <div class="manga-card featured-card">
+                    <div class="manga-cover">
+                        <img src="https://via.placeholder.com/300x450/43e97b/ffffff?text=My+Hero+Academia" alt="My Hero Academia">
+                        <span class="badge hot">Quente</span>
+                    </div>
+                    <div class="manga-info">
+                        <h3>My Hero Academia</h3>
+                        <p class="genre">Ação, Super Herói</p>
+                        <div class="rating">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star-half-alt"></i>
+                            <span>4.7</span>
+                        </div>
+                        <p class="chapter">Capítulo 410</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Latest Releases -->
+    <section class="latest">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-clock"></i> Últimos Lançamentos</h2>
+            <div class="manga-list">
+                <!-- List Item 1 -->
+                <div class="manga-list-item">
+                    <img src="https://via.placeholder.com/80x120/667eea/ffffff?text=OP" alt="One Piece">
+                    <div class="list-info">
+                        <h4>One Piece</h4>
+                        <p>Capítulo 1098 - A Batalha Final</p>
+                        <span class="time">Há 2 horas</span>
+                    </div>
+                    <a href="reader.html" class="btn-read">Ler</a>
+                </div>
+
+                <!-- List Item 2 -->
+                <div class="manga-list-item">
+                    <img src="https://via.placeholder.com/80x120/f093fb/ffffff?text=JK" alt="Jujutsu Kaisen">
+                    <div class="list-info">
+                        <h4>Jujutsu Kaisen</h4>
+                        <p>Capítulo 245 - O Despertar</p>
+                        <span class="time">Há 4 horas</span>
+                    </div>
+                    <a href="reader.html" class="btn-read">Ler</a>
+                </div>
+
+                <!-- List Item 3 -->
+                <div class="manga-list-item">
+                    <img src="https://via.placeholder.com/80x120/4facfe/ffffff?text=DS" alt="Demon Slayer">
+                    <div class="list-info">
+                        <h4>Demon Slayer: Gaiden</h4>
+                        <p>Capítulo 5 - História Extra</p>
+                        <span class="time">Há 6 horas</span>
+                    </div>
+                    <a href="reader.html" class="btn-read">Ler</a>
+                </div>
+
+                <!-- List Item 4 -->
+                <div class="manga-list-item">
+                    <img src="https://via.placeholder.com/80x120/43e97b/ffffff?text=MHA" alt="My Hero Academia">
+                    <div class="list-info">
+                        <h4>My Hero Academia</h4>
+                        <p>Capítulo 410 - O Legado</p>
+                        <span class="time">Há 8 horas</span>
+                    </div>
+                    <a href="reader.html" class="btn-read">Ler</a>
+                </div>
+
+                <!-- List Item 5 -->
+                <div class="manga-list-item">
+                    <img src="https://via.placeholder.com/80x120/fa7094/ffffff?text=CC" alt="Chainsaw Man">
+                    <div class="list-info">
+                        <h4>Chainsaw Man</h4>
+                        <p>Capítulo 150 - Revanche</p>
+                        <span class="time">Há 12 horas</span>
+                    </div>
+                    <a href="reader.html" class="btn-read">Ler</a>
+                </div>
+            </div>
+            <div class="view-all">
+                <a href="#" class="btn-view-all">Ver Todos <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Genres -->
+    <section class="genres">
+        <div class="container">
+            <h2 class="section-title"><i class="fas fa-th-large"></i> Gêneros</h2>
+            <div class="genre-grid">
+                <a href="#" class="genre-card">
+                    <i class="fas fa-fist-raised"></i>
+                    <span>Ação</span>
+                </a>
+                <a href="#" class="genre-card">
+                    <i class="fas fa-heart"></i>
+                    <span>Romance</span>
+                </a>
+                <a href="#" class="genre-card">
+                    <i class="fas fa-laugh"></i>
+                    <span>Comédia</span>
+                </a>
+                <a href="#" class="genre-card">
+                    <i class="fas fa-dragon"></i>
+                    <span>Fantasia</span>
+                </a>
+                <a href="#" class="genre-card">
+                    <i class="fas fa-robot"></i>
+                    <span>Sci-Fi</span>
+                </a>
+                <a href="#" class="genre-card">
+                    <i class="fas fa-user-ninja"></i>
+                    <span>Aventura</span>
+                </a>
+                <a href="#" class="genre-card">
+                    <i class="fas fa-ghost"></i>
+                    <span>Sobrenatural</span>
+                </a>
+                <a href="#" class="genre-card">
+                    <i class="fas fa-school"></i>
+                    <span>Slice of Life</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Premium Banner -->
+    <section class="premium-banner">
+        <div class="container">
+            <div class="premium-content">
+                <div class="premium-text">
+                    <h2><i class="fas fa-crown"></i> Seja Premium</h2>
+                    <ul>
+                        <li><i class="fas fa-check"></i> Leitura sem anúncios</li>
+                        <li><i class="fas fa-check"></i> Acesso antecipado a capítulos</li>
+                        <li><i class="fas fa-check"></i> Downloads offline</li>
+                        <li><i class="fas fa-check"></i> Suporte prioritário</li>
+                        <li><i class="fas fa-check"></i> Badge exclusivo no perfil</li>
+                    </ul>
+                    <a href="premium.html" class="btn-premium">Assinar Agora - R$ 14,90/mês</a>
+                </div>
+                <div class="premium-image">
+                    <i class="fas fa-gem"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3><i class="fas fa-book-open"></i> MangaReader</h3>
+                    <p>A melhor plataforma de leitura de mangás online. Milhares de títulos disponíveis gratuitamente.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-discord"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Links Úteis</h4>
+                    <ul>
+                        <li><a href="#">Sobre Nós</a></li>
+                        <li><a href="#">Termos de Uso</a></li>
+                        <li><a href="#">Política de Privacidade</a></li>
+                        <li><a href="#">DMCA</a></li>
+                        <li><a href="#">Contato</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Gêneros Populares</h4>
+                    <ul>
+                        <li><a href="#">Ação</a></li>
+                        <li><a href="#">Romance</a></li>
+                        <li><a href="#">Fantasia</a></li>
+                        <li><a href="#">Comédia</a></li>
+                        <li><a href="#">Drama</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Newsletter</h4>
+                    <p>Receba atualizações dos seus mangás favoritos</p>
+                    <form class="newsletter-form">
+                        <input type="email" placeholder="Seu email">
+                        <button type="submit">Inscrever</button>
+                    </form>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 MangaReader. Todos os direitos reservados.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>

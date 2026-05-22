@@ -1,0 +1,414 @@
+/* Reader Page Styles */
+
+/* Reader Container with Sidebar Layout */
+.reader-container {
+    display: flex;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 20px;
+    min-height: calc(100vh - 200px);
+}
+
+/* Sidebar Ads */
+.sidebar-ad {
+    width: 180px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
+
+.sidebar-ad.left-sidebar {
+    display: block;
+}
+
+.sidebar-ad.right-sidebar {
+    display: block;
+}
+
+.ad-container {
+    background: rgba(15, 52, 96, 0.5);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.ad-label {
+    background: rgba(0, 0, 0, 0.3);
+    color: var(--text-secondary);
+    font-size: 0.7rem;
+    text-align: center;
+    padding: 5px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.ad-content {
+    padding: 10px;
+}
+
+.ad-content img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 5px;
+}
+
+/* Hide ads for premium users (add 'premium-user' class to body) */
+body.premium-user .sidebar-ad {
+    display: none;
+}
+
+body.premium-user .reader-container {
+    justify-content: center;
+}
+
+/* Reading Area */
+.reading-area {
+    flex: 1;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Chapter Header */
+.chapter-header {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.chapter-info {
+    text-align: center;
+    flex: 1;
+}
+
+.chapter-info h1 {
+    font-size: 1.5rem;
+    color: var(--text-primary);
+    margin-bottom: 5px;
+}
+
+.chapter-info p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+}
+
+.chapter-options {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.btn-option {
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    color: var(--text-secondary);
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-option:hover {
+    background: var(--primary-color);
+    color: white;
+    transform: scale(1.1);
+}
+
+.btn-chapter-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 25px;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-chapter-nav:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Manga Pages */
+.manga-pages {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.page-container {
+    background: var(--card-bg);
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.page-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    /* HD Quality for ALL users */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+}
+
+/* Chapter Footer */
+.chapter-footer {
+    background: var(--card-bg);
+    border-radius: 15px;
+    padding: 25px;
+    margin-top: 20px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.footer-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.btn-footer-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 20px;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
+    border-radius: 25px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.btn-footer-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: var(--text-primary);
+}
+
+.btn-footer-nav.primary {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+}
+
+.btn-footer-nav.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+}
+
+.reading-progress {
+    text-align: center;
+}
+
+.reading-progress p {
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background: rgba(255, 255, 255, 0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary-color), var(--accent-color));
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+/* Premium Upgrade Banner */
+.premium-upgrade-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: linear-gradient(135deg, var(--card-bg), rgba(255, 215, 0, 0.2));
+    border: 2px solid var(--gold);
+    border-radius: 15px;
+    padding: 20px 30px;
+    z-index: 999;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    animation: slideUp 0.5s ease;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(-50%) translateY(0);
+    }
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.banner-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-primary);
+    font-size: 1rem;
+}
+
+.banner-text i {
+    color: var(--gold);
+    font-size: 1.5rem;
+}
+
+.btn-banner {
+    padding: 10px 25px;
+    background: linear-gradient(135deg, var(--gold), #ffb347);
+    color: var(--darker-bg);
+    border-radius: 25px;
+    font-weight: 700;
+    transition: all 0.3s ease;
+}
+
+.btn-banner:hover {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+}
+
+.btn-close-banner {
+    background: transparent;
+    border: none;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 5px;
+    transition: all 0.3s ease;
+}
+
+.btn-close-banner:hover {
+    color: var(--text-primary);
+    transform: rotate(90deg);
+}
+
+/* Small Premium Button in Header */
+.btn-premium-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 20px;
+    background: linear-gradient(135deg, var(--gold), #ffb347);
+    color: var(--darker-bg);
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+}
+
+.btn-premium-small:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 20px rgba(255, 215, 0, 0.4);
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .sidebar-ad {
+        width: 160px;
+    }
+}
+
+@media (max-width: 992px) {
+    .reader-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar-ad {
+        width: 100%;
+        max-width: 300px;
+        position: static;
+        order: 2;
+    }
+
+    .sidebar-ad.left-sidebar {
+        order: 1;
+    }
+
+    .sidebar-ad.right-sidebar {
+        order: 3;
+    }
+
+    .reading-area {
+        order: 2;
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .chapter-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .chapter-nav {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .footer-nav {
+        flex-direction: column;
+    }
+
+    .btn-footer-nav {
+        justify-content: center;
+    }
+
+    .premium-upgrade-banner {
+        left: 10px;
+        right: 10px;
+        transform: none;
+        width: calc(100% - 20px);
+    }
+
+    .banner-content {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .sidebar-ad {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .reader-container {
+        padding: 10px;
+    }
+
+    .page-container img {
+        border-radius: 5px;
+    }
+
+    .chapter-header,
+    .chapter-footer {
+        padding: 15px;
+    }
+}
