@@ -1,0 +1,29 @@
+INSTRUÇÕES PARA A PRÓXIMA IA - MOCKUP SITE DE MANGÁ
+
+CONTEXTO DO PROJETO:
+O usuário solicitou a criação de um mockup para um site de leitura de mangás com foco em monetização.
+
+DECISÕES DE DESIGN E NEGÓCIO JÁ DEFINIDAS:
+1. QUALIDADE HD: Disponível para TODOS os usuários (Free e Premium). Não é um benefício exclusivo.
+2. DIFERENCIAÇÃO FREE vs PREMIUM:
+   - Usuários FREE: Veem anúncios discretos nas laterais da página de leitura (não intrusivos, não pop-ups, não interrompem a leitura).
+   - Usuários PREMIUM: Experiência 100% limpa, sem nenhum anúncio.
+3. OUTROS BENEFÍCIOS PREMIUM (sugeridos): Downloads offline, acesso antecipado (opcional), suporte prioritário.
+
+ESTRUTURA DE ARQUIVOS CRIADA NO /workspace:
+- index.html: Página inicial com destaques, lançamentos e navegação.
+- reader.html: Página de leitura do mangá. É aqui que a lógica dos anúncios laterais deve ser aplicada para usuários free.
+- premium.html: Página de vendas da assinatura, explicando que o principal benefício é "Ler sem anúncios".
+- styles.css: Estilização global.
+- script.js: Lógica geral.
+
+TAREFAS PENDENTES OU SUGESTÕES DE MELHORIA PARA A PRÓXIMA IA:
+1. Verificar se o `reader.html` está configurado corretamente para exibir as divs de anúncio apenas quando o usuário NÃO for premium.
+2. Garantir que o CSS dos anúncios no `reader.html` use posições fixas ou flexbox nas laterais, garantindo que o conteúdo do mangá fique centralizado e legível em qualquer tamanho de tela.
+3. O texto da página `premium.html` deve enfatizar: "Cansado de anúncios? Assine o Premium e tenha uma leitura limpa." ao invés de prometer qualidade de imagem superior.
+4. Implementar um simulador simples no JavaScript (ex: um botão "Simular Usuário Free/Premium") para demonstrar visualmente a diferença na página de leitura.
+
+OBSERVAÇÃO IMPORTANTE:
+O usuário tentou pedir uma prévia em imagem, mas o sistema não suporta envio de imagens. A validação deve ser feita abrindo os arquivos HTML locais no navegador.
+
+FIM DAS INSTRUÇÕES.

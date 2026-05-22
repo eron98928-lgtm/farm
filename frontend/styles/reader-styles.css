@@ -1,0 +1,357 @@
+/* ─── Reader Page ──────────────────────────────────────────────────────────── */
+
+.reader-container {
+  display: flex;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 20px 24px;
+  gap: 20px;
+  min-height: calc(100vh - 200px);
+}
+
+/* ─── Sidebar Ads ─────────────────────────────────────────────────────────── */
+.sidebar-ad {
+  width: 180px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.ad-container {
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.ad-label {
+  background: rgba(0,0,0,0.4);
+  color: var(--text-3);
+  font-size: 0.65rem;
+  text-align: center;
+  padding: 5px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.ad-content { padding: 10px; }
+.ad-content img { width: 100%; height: auto; display: block; border-radius: 6px; }
+
+body.premium-user .sidebar-ad { display: none; }
+body.premium-user .reader-container { justify-content: center; }
+
+/* ─── Reading Area ────────────────────────────────────────────────────────── */
+.reading-area {
+  flex: 1;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+/* ─── Chapter Header ──────────────────────────────────────────────────────── */
+.chapter-header {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.chapter-info { text-align: center; flex: 1; }
+
+.chapter-info h1 {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 4px;
+}
+
+.chapter-info p { color: var(--text-2); font-size: 0.9rem; }
+
+.chapter-options {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-option {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+}
+
+.btn-option:hover {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: #fff;
+  transform: scale(1.1);
+}
+
+.btn-chapter-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 22px;
+  background: linear-gradient(135deg, var(--purple), var(--purple-light));
+  color: #fff;
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.btn-chapter-nav:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px var(--purple-glow);
+}
+
+/* ─── Manga Pages ─────────────────────────────────────────────────────────── */
+.manga-pages {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.page-container {
+  position: relative;
+  background: var(--bg-card);
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.4s ease;
+  z-index: 1;
+}
+
+/* Brilho ambiental adaptativo premium (Ambilight) */
+.page-container::after {
+  content: '';
+  position: absolute;
+  top: 15px; left: 15px; right: 15px; bottom: 15px;
+  background-image: var(--page-bg-image);
+  background-size: cover;
+  background-position: center;
+  filter: blur(50px) saturate(1.8);
+  opacity: 0.32;
+  z-index: -1;
+  border-radius: var(--radius-md);
+  transition: opacity 0.5s ease, transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+.page-container:hover {
+  transform: translateY(-4px) scale(1.008);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.65), 0 0 28px var(--purple-glow-sm);
+}
+
+.page-container:hover::after {
+  opacity: 0.45;
+  transform: scale(1.02);
+}
+
+.page-container img {
+  width: 100%;
+  height: auto;
+  display: block;
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+  position: relative;
+  z-index: 2;
+  border-radius: var(--radius-md);
+}
+
+/* ─── Chapter Footer ──────────────────────────────────────────────────────── */
+.chapter-footer {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-top: 20px;
+  box-shadow: var(--shadow-card);
+}
+
+.footer-nav {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.btn-footer-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 18px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--border);
+  color: var(--text-2);
+  border-radius: 24px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+}
+
+.btn-footer-nav:hover {
+  background: rgba(255,255,255,0.12);
+  color: var(--text-1);
+}
+
+.btn-footer-nav.primary {
+  background: linear-gradient(135deg, var(--purple), var(--purple-light));
+  border-color: transparent;
+  color: #fff;
+}
+
+.btn-footer-nav.primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px var(--purple-glow);
+}
+
+.reading-progress { text-align: center; }
+
+.reading-progress p {
+  color: var(--text-2);
+  font-size: 0.88rem;
+  margin-bottom: 10px;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--purple), var(--pink));
+  border-radius: 10px;
+  transition: width 0.3s ease;
+}
+
+/* ─── Premium Upgrade Banner ─────────────────────────────────────────────── */
+.premium-upgrade-banner {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(30, 28, 40, 0.95);
+  backdrop-filter: blur(16px);
+  border: 1.5px solid var(--gold);
+  border-radius: var(--radius-lg);
+  padding: 18px 28px;
+  z-index: 999;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.6), 0 0 20px rgba(245,197,24,0.15);
+  animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateX(-50%) translateY(30px); }
+  to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.banner-content {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.banner-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-1);
+  font-size: 0.95rem;
+}
+
+.banner-text i { color: var(--gold); font-size: 1.4rem; }
+
+.btn-banner {
+  padding: 9px 22px;
+  background: linear-gradient(135deg, var(--gold), #ffb347);
+  color: #0d0d14;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transition: all 0.2s;
+}
+
+.btn-banner:hover {
+  transform: scale(1.05);
+  box-shadow: 0 5px 20px rgba(245,197,24,0.4);
+}
+
+.btn-close-banner {
+  background: transparent;
+  border: none;
+  color: var(--text-3);
+  cursor: pointer;
+  padding: 5px;
+  transition: all 0.2s;
+}
+
+.btn-close-banner:hover {
+  color: var(--text-1);
+  transform: rotate(90deg);
+}
+
+/* ─── Header Premium Button ───────────────────────────────────────────────── */
+.btn-premium-small {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 18px;
+  background: linear-gradient(135deg, var(--gold), #ffb347);
+  color: #0d0d14;
+  border-radius: 24px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  transition: all 0.2s;
+}
+
+.btn-premium-small:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 5px 20px rgba(245,197,24,0.4);
+}
+
+/* ─── Responsive ──────────────────────────────────────────────────────────── */
+@media (max-width: 1200px) { .sidebar-ad { width: 160px; } }
+
+@media (max-width: 992px) {
+  .reader-container { flex-direction: column; align-items: center; }
+  .sidebar-ad { width: 100%; max-width: 320px; position: static; }
+  .sidebar-ad.left-sidebar { order: 1; }
+  .reading-area { order: 2; width: 100%; }
+  .sidebar-ad.right-sidebar { order: 3; }
+}
+
+@media (max-width: 768px) {
+  .chapter-header { flex-direction: column; text-align: center; }
+  .chapter-nav { width: 100%; display: flex; justify-content: center; }
+  .footer-nav { flex-direction: column; }
+  .btn-footer-nav { justify-content: center; }
+  .premium-upgrade-banner { left: 12px; right: 12px; transform: none; width: auto; }
+  .banner-content { flex-direction: column; text-align: center; }
+}
+
+@media (max-width: 480px) {
+  .reader-container { padding: 10px; }
+  .chapter-header, .chapter-footer { padding: 14px; }
+}

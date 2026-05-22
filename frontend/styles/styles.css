@@ -1,0 +1,1074 @@
+/* ─── Reset ──────────────────────────────────────────────────────────────────── */
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+/* ─── Design Tokens ──────────────────────────────────────────────────────────── */
+:root {
+  --purple:        #7c5cbf;
+  --purple-light:  #9b7fd4;
+  --purple-glow:   rgba(124, 92, 191, 0.55);
+  --purple-glow-sm:rgba(124, 92, 191, 0.30);
+  --pink:          #f093fb;
+  --gold:          #f5c518;
+  --hot:           #ff5f6d;
+  --new:           #00d2a0;
+
+  --bg-deepest:    #0d0d14;
+  --bg-deep:       #111118;
+  --bg-surface:    #18181f;
+  --bg-card:       #1e1e28;
+  --bg-card-hover: #252530;
+  --border:        rgba(255,255,255,0.07);
+
+  --text-1: #f2f2f5;
+  --text-2: #a0a0b8;
+  --text-3: #6b6b85;
+
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+  --shadow-card: 0 4px 24px rgba(0,0,0,0.5);
+  --shadow-hover: 0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(124,92,191,0.4);
+  --glow-hover:  0 0 24px var(--purple-glow), 0 8px 40px rgba(0,0,0,0.6);
+}
+
+/* ─── Base ───────────────────────────────────────────────────────────────────── */
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Segoe UI', system-ui, sans-serif;
+  background: var(--bg-deepest);
+  color: var(--text-1);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+a { text-decoration: none; color: inherit; }
+.container { max-width: 1280px; margin: 0 auto; padding: 0 24px; }
+
+/* ─── Navbar ─────────────────────────────────────────────────────────────────── */
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(13, 13, 20, 0.72);
+  backdrop-filter: blur(18px) saturate(180%);
+  -webkit-backdrop-filter: blur(18px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  padding: 18px 0;
+  transition: padding 0.3s cubic-bezier(0.25, 1, 0.5, 1), background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.header.scrolled {
+  padding: 10px 0;
+  background: rgba(9, 9, 14, 0.88);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.4);
+  border-color: rgba(124, 92, 191, 0.15);
+}
+
+.header .container { display: flex; align-items: center; gap: 32px; }
+
+.logo h1 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--purple-light), var(--pink));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.5px;
+}
+
+.nav { display: flex; gap: 28px; flex: 1; }
+
+.nav a {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-2);
+  position: relative;
+  padding: 4px 0;
+  transition: color 0.2s;
+}
+.nav a:hover, .nav a.active { color: var(--text-1); }
+.nav a::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 2px;
+  background: linear-gradient(90deg, var(--purple), var(--pink));
+  border-radius: 2px;
+  transition: width 0.25s ease;
+}
+.nav a:hover::after, .nav a.active::after { width: 100%; }
+.premium-link { color: var(--gold) !important; }
+
+.header-actions { display: flex; align-items: center; gap: 16px; margin-left: auto; }
+
+.search-box {
+  display: flex;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  padding: 4px 14px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.search-box:focus-within {
+  border-color: var(--purple);
+  box-shadow: 0 0 0 3px var(--purple-glow-sm);
+}
+.search-box input {
+  background: transparent;
+  border: none;
+  color: var(--text-1);
+  padding: 6px 8px;
+  outline: none;
+  width: 200px;
+  font-size: 0.9rem;
+}
+.search-box input::placeholder { color: var(--text-3); }
+.search-box button {
+  background: transparent; border: none;
+  color: var(--text-3); cursor: pointer;
+  transition: color 0.2s;
+}
+.search-box button:hover { color: var(--purple-light); }
+
+.user-actions { display: flex; gap: 8px; }
+
+.btn-login, .btn-register {
+  padding: 7px 18px;
+  border-radius: 20px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s;
+}
+.btn-login {
+  background: transparent;
+  border: 1.5px solid rgba(124,92,191,0.5);
+  color: var(--purple-light);
+}
+.btn-login:hover {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: #fff;
+}
+.btn-register {
+  background: linear-gradient(135deg, var(--purple), #5a3fa0);
+  color: #fff;
+  box-shadow: 0 2px 12px var(--purple-glow-sm);
+}
+.btn-register:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--purple-glow);
+}
+
+/* ─── Hero Mangá Interativo ─────────────────────────────────────────────────── */
+.hero-manga {
+  padding: 96px 0 80px;
+  position: relative;
+  overflow: hidden;
+  background: radial-gradient(ellipse at 50% 50%, rgba(124, 92, 191, 0.12) 0%, var(--bg-deepest) 90%);
+  border-bottom: 2px solid rgba(124, 92, 191, 0.15);
+}
+
+/* Halftone Screentone background pattern */
+.manga-screentone-bg {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(124, 92, 191, 0.08) 1.5px, transparent 1.5px);
+  background-size: 14px 14px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Speed Lines estilo mangá de ação */
+.manga-speedlines {
+  position: absolute;
+  inset: 0;
+  background: 
+    linear-gradient(90deg, transparent 40%, rgba(255,255,255,0.02) 50%, transparent 60%),
+    repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(124, 92, 191, 0.03) 10px, rgba(124, 92, 191, 0.03) 11px);
+  mask-image: radial-gradient(circle at 75% 50%, transparent 20%, #000 80%);
+  -webkit-mask-image: radial-gradient(circle at 75% 50%, transparent 20%, #000 80%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+.hero-container {
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 48px;
+  position: relative;
+  z-index: 2;
+}
+
+/* Badge estilizado */
+.manga-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--hot), #ff7e5f);
+  color: #fff;
+  padding: 6px 16px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 18px;
+  box-shadow: 4px 4px 0px #000;
+  border: 1.5px solid #000;
+  transform: rotate(-1.5deg);
+  width: fit-content;
+}
+
+/* Título de impacto épico */
+.manga-title-epic {
+  font-size: clamp(2.8rem, 6vw, 4.4rem);
+  font-weight: 900;
+  line-height: 0.95;
+  letter-spacing: -2px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+}
+
+.manga-title-epic .stroke-text {
+  color: transparent;
+  -webkit-text-stroke: 1.5px #fff;
+}
+
+.manga-title-epic .fill-text {
+  color: #fff;
+  text-shadow: 3px 3px 0px var(--purple);
+}
+
+.manga-title-epic .glow-text {
+  background: linear-gradient(135deg, var(--pink), var(--purple-light));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 12px var(--purple-glow));
+}
+
+/* Balão de Fala estilo Mangá */
+.manga-speech-bubble {
+  background: #1e1e28;
+  border: 2px solid #fff;
+  box-shadow: 6px 6px 0px #000;
+  border-radius: 16px;
+  padding: 18px 24px;
+  margin-bottom: 32px;
+  position: relative;
+  transform: rotate(0.5deg);
+  max-width: 480px;
+}
+
+.manga-speech-bubble p {
+  color: var(--text-1);
+  font-size: 1.05rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.manga-speech-bubble .bubble-arrow {
+  position: absolute;
+  bottom: -12px;
+  left: 35px;
+  width: 20px;
+  height: 20px;
+  background: #1e1e28;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
+  transform: rotate(45deg);
+  box-shadow: 4px 4px 0px #000;
+}
+
+/* Botões do Hero estilo Mangá */
+.btn-primary-manga,
+.btn-secondary-manga {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 36px;
+  font-weight: 800;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 2.5px solid #fff;
+}
+
+.btn-primary-manga {
+  background: #fff;
+  color: #0b0b0f;
+  box-shadow: 5px 5px 0px var(--purple);
+}
+
+.btn-primary-manga:hover {
+  transform: translateY(-2px);
+  box-shadow: 2px 2px 0px var(--purple);
+  background: var(--purple-light);
+  color: #fff;
+  border-color: #fff;
+}
+
+.btn-secondary-manga {
+  background: transparent;
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.4);
+}
+
+.btn-secondary-manga:hover {
+  transform: translateY(-2px);
+  border-color: var(--pink);
+  color: var(--pink);
+  box-shadow: 0px 0px 15px var(--pink);
+}
+
+/* Painéis Visuais do Mangá à Direita */
+.hero-visual-panels {
+  position: relative;
+  height: 480px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  perspective: 1200px;
+}
+
+.panel-stack {
+  position: absolute;
+  border: 3.5px solid #fff;
+  box-shadow: 8px 8px 0px #000;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  transform-style: preserve-3d;
+}
+
+.panel-stack::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(11, 11, 15, 0.85));
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Painel Principal com Recorte de Personagem */
+.panel-1 {
+  width: 280px;
+  height: 380px;
+  z-index: 10;
+  background-color: #161622;
+  transform: rotate(-3deg) translateZ(10px);
+  background-image: radial-gradient(circle at 50% 50%, rgba(124, 92, 191, 0.15), transparent 85%);
+}
+
+.panel-screentone {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(255,255,255,0.06) 1.2px, transparent 1.2px);
+  background-size: 8px 8px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Imagem recortada do personagem flutuando */
+.hero-char-cutout {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%) translateZ(35px);
+  height: 110%;
+  width: auto;
+  object-fit: contain;
+  z-index: 3;
+  filter: drop-shadow(0px 8px 24px rgba(124, 92, 191, 0.65)) drop-shadow(0 0 10px rgba(255,255,255,0.15));
+  transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  pointer-events: none;
+}
+
+/* Painéis de Fundo */
+.panel-2 {
+  width: 220px;
+  height: 320px;
+  background-color: #0c0c14;
+  z-index: 5;
+  transform: rotate(6deg) translateX(-120px) translateY(30px) translateZ(-20px);
+  background-image: radial-gradient(circle at 50% 50%, rgba(240, 147, 251, 0.15), transparent 85%);
+}
+
+.panel-2 .hero-char-cutout {
+  height: 105%;
+  bottom: -10px;
+  filter: drop-shadow(0px 8px 24px rgba(240, 147, 251, 0.55)) drop-shadow(0 0 10px rgba(255,255,255,0.1));
+}
+
+.panel-3 {
+  width: 200px;
+  height: 300px;
+  background-color: #0a0a0f;
+  z-index: 4;
+  transform: rotate(-10deg) translateX(130px) translateY(-20px) translateZ(-40px);
+  background-image: radial-gradient(circle at 50% 50%, rgba(79, 172, 254, 0.15), transparent 85%);
+}
+
+.panel-3 .hero-char-cutout {
+  height: 100%;
+  bottom: 0;
+  filter: drop-shadow(0px 8px 24px rgba(79, 172, 254, 0.55)) drop-shadow(0 0 10px rgba(255,255,255,0.1));
+}
+
+.panel-caption {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+  background: #fff;
+  color: #000;
+  font-size: 0.72rem;
+  font-weight: 900;
+  padding: 4px 10px;
+  border-radius: 2px;
+  border: 1.5px solid #000;
+  z-index: 5;
+  transform: rotate(-2deg);
+  box-shadow: 2px 2px 0px #000;
+}
+
+/* Hover effects nos painéis visuais */
+.hero-visual-panels:hover .panel-1 {
+  transform: rotate(-1deg) scale(1.05) translateZ(40px);
+  box-shadow: 12px 12px 0px #000, 0 20px 40px rgba(124, 92, 191, 0.4);
+}
+
+.hero-visual-panels:hover .panel-2 {
+  transform: rotate(10deg) translateX(-150px) translateY(45px) translateZ(10px);
+}
+
+.hero-visual-panels:hover .panel-3 {
+  transform: rotate(-15deg) translateX(160px) translateY(-35px) translateZ(0px);
+}
+
+.hero-visual-panels:hover .hero-char-cutout {
+  transform: translateX(-50%) scale(1.08) translateZ(60px);
+  filter: drop-shadow(0px 12px 32px rgba(124, 92, 191, 0.85)) drop-shadow(0 0 15px rgba(255,255,255,0.25));
+}
+
+.hero-buttons { display: flex; gap: 16px; justify-content: flex-start; flex-wrap: wrap; }
+
+/* ─── Buttons ────────────────────────────────────────────────────────────────── */
+.btn-primary, .btn-secondary {
+  padding: 13px 36px;
+  border-radius: 28px;
+  font-weight: 700;
+  font-size: 1rem;
+  cursor: pointer;
+  border: none;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+/* shimmer animation */
+.btn-primary::after, .btn-register::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.18) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.5s ease;
+}
+.btn-primary:hover::after, .btn-register:hover::after { transform: translateX(100%); }
+
+.btn-primary {
+  background: linear-gradient(135deg, var(--purple), #5a3fa0);
+  color: #fff;
+  box-shadow: 0 4px 20px var(--purple-glow-sm);
+}
+.btn-primary:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px var(--purple-glow);
+}
+.btn-secondary {
+  background: rgba(240,147,251,0.08);
+  border: 1.5px solid var(--pink);
+  color: var(--pink);
+}
+.btn-secondary:hover {
+  background: var(--pink);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 28px rgba(240,147,251,0.4);
+}
+
+/* ─── Section Title ──────────────────────────────────────────────────────────── */
+.section-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  letter-spacing: -0.3px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-1);
+}
+.section-title i { color: var(--purple-light); font-size: 1.1rem; }
+
+/* ─── Featured (Grid de Cards) ───────────────────────────────────────────────── */
+.featured { padding: 60px 0; }
+
+.manga-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.manga-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  position: relative;
+  transform-style: preserve-3d;
+  perspective: 1000px;
+  /* Transição ultra suave para hover e movimento */
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.manga-card.is-tilting {
+  /* Remove transição de transform durante o movimento para resposta imediata */
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Efeito de brilho reflexivo premium (glare) */
+.manga-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle 160px at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.12),
+    transparent 80%
+  );
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+/* Retícula de Mangá (Halftone Screentone overlay) */
+.manga-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(124, 92, 191, 0.15) 1.5px, transparent 1.5px);
+  background-size: 8px 8px;
+  z-index: 4;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.manga-card:hover::before,
+.manga-card:hover::after {
+  opacity: 1;
+}
+
+.manga-card:hover {
+  box-shadow: var(--glow-hover);
+  border-color: rgba(124,92,191,0.55);
+}
+
+/* Imagem ocupa todo o card — grande e dominante */
+.manga-cover {
+  position: relative;
+  overflow: hidden;
+  aspect-ratio: 2/3;
+  transform-style: preserve-3d;
+}
+.manga-cover img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.manga-card:hover .manga-cover img { transform: scale(1.05) translateZ(10px); }
+
+/* Gradient overlay sobre a imagem */
+.manga-cover::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    transparent 45%,
+    rgba(10,10,16,0.65) 72%,
+    rgba(10,10,16,0.98) 100%
+  );
+  pointer-events: none;
+}
+
+/* Info flutuando sobre o gradient em perspectiva 3D */
+.manga-info {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  padding: 14px 14px 16px;
+  z-index: 6;
+  transform: translateZ(25px); /* Flutua acima da imagem */
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.manga-info h3 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 4px;
+  text-shadow: 0 2px 6px rgba(0,0,0,0.8);
+}
+.manga-info .genre {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.75);
+  margin-bottom: 6px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rating {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  margin-bottom: 4px;
+}
+.rating i { color: var(--gold); font-size: 0.72rem; }
+.rating span { color: rgba(255,255,255,0.85); font-size: 0.72rem; font-weight: 600; }
+.chapter { font-size: 0.75rem; color: var(--purple-light); font-weight: 600; }
+
+/* Badges flutuando */
+.badge {
+  position: absolute;
+  top: 10px; right: 10px;
+  z-index: 7;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transform: translateZ(35px); /* Flutua ainda mais alto */
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.badge.hot  { background: rgba(255,95,109,0.85); color: #fff; box-shadow: 0 0 12px rgba(255,95,109,0.5); }
+.badge.new  { background: rgba(0,210,160,0.85);  color: #fff; box-shadow: 0 0 12px rgba(0,210,160,0.5); }
+.badge.prem { background: rgba(245,197,24,0.9);  color: #111; box-shadow: 0 0 12px rgba(245,197,24,0.4); }
+
+/* Barra de progresso de leitura (aparece no hover) */
+.manga-card .read-progress {
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.1);
+  z-index: 4;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  overflow: hidden;
+}
+.manga-card .read-progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--purple), var(--pink));
+  transition: width 0.3s ease;
+}
+
+/* ─── Latest Releases (Lista) ────────────────────────────────────────────────── */
+.latest {
+  padding: 60px 0;
+  background: linear-gradient(180deg, var(--bg-deepest) 0%, var(--bg-deep) 100%);
+}
+
+.manga-list { display: flex; flex-direction: column; gap: 2px; }
+
+.manga-list-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--bg-surface);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  border: 1px solid transparent;
+  transition: background 0.2s, border-color 0.2s, transform 0.2s, box-shadow 0.2s;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.manga-list-item::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: linear-gradient(180deg, var(--purple), var(--pink));
+  border-radius: 3px 0 0 3px;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.manga-list-item:hover {
+  background: var(--bg-card-hover);
+  border-color: rgba(124,92,191,0.25);
+  transform: translateX(6px);
+  box-shadow: var(--shadow-card);
+}
+.manga-list-item:hover::before { opacity: 1; }
+
+/* Thumbnail grande */
+.manga-list-item img {
+  width: 64px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+/* Rank number */
+.manga-list-item .rank {
+  font-size: 1.4rem;
+  font-weight: 900;
+  color: var(--text-3);
+  width: 28px;
+  text-align: center;
+  flex-shrink: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.list-info { flex: 1; min-width: 0; }
+.list-info h4 {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--text-1);
+  margin-bottom: 3px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.list-info p {
+  font-size: 0.8rem;
+  color: var(--text-2);
+  margin-bottom: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.time {
+  font-size: 0.72rem;
+  color: var(--purple-light);
+  font-weight: 500;
+}
+
+.btn-read {
+  padding: 8px 20px;
+  background: linear-gradient(135deg, var(--purple), #5a3fa0);
+  color: #fff;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  position: relative;
+  overflow: hidden;
+}
+.btn-read:hover {
+  transform: scale(1.06);
+  box-shadow: 0 4px 16px var(--purple-glow);
+}
+
+.view-all { text-align: center; margin-top: 28px; }
+.btn-view-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 28px;
+  border: 1.5px solid rgba(124,92,191,0.4);
+  color: var(--purple-light);
+  border-radius: 24px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+.btn-view-all:hover {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: #fff;
+  box-shadow: 0 4px 16px var(--purple-glow);
+}
+
+/* ─── Genres ─────────────────────────────────────────────────────────────────── */
+.genres { padding: 60px 0; }
+
+.genre-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 14px;
+}
+
+.genre-card {
+  background: var(--bg-card);
+  padding: 24px 16px;
+  border-radius: var(--radius-md);
+  text-align: center;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+.genre-card i {
+  font-size: 2rem;
+  color: var(--purple-light);
+  margin-bottom: 10px;
+  display: block;
+  transition: transform 0.25s ease;
+}
+.genre-card span {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-2);
+  transition: color 0.25s;
+}
+.genre-card:hover {
+  background: linear-gradient(135deg, var(--purple), #5a3fa0);
+  border-color: transparent;
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px var(--purple-glow);
+}
+.genre-card:hover i { color: #fff; transform: scale(1.15); }
+.genre-card:hover span { color: #fff; }
+
+/* ─── Premium Banner ─────────────────────────────────────────────────────────── */
+.premium-banner {
+  padding: 80px 0;
+  background:
+    radial-gradient(ellipse 60% 60% at 80% 50%, rgba(245,197,24,0.07) 0%, transparent 70%),
+    var(--bg-deepest);
+}
+
+.premium-content {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  background: linear-gradient(135deg, var(--bg-card), rgba(124,92,191,0.12));
+  padding: 48px;
+  border-radius: 24px;
+  border: 1px solid rgba(245,197,24,0.25);
+  box-shadow: 0 0 40px rgba(245,197,24,0.05), inset 0 1px 0 rgba(255,255,255,0.05);
+}
+
+.premium-text { flex: 1; }
+
+.premium-text h2 {
+  font-size: 2.2rem;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+  margin-bottom: 20px;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.premium-text ul { list-style: none; margin-bottom: 32px; }
+.premium-text li {
+  padding: 9px 0;
+  font-size: 1rem;
+  color: var(--text-2);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.premium-text li:last-child { border-bottom: none; }
+.premium-text li i { color: var(--gold); font-size: 0.9rem; }
+
+.btn-premium {
+  display: inline-block;
+  padding: 14px 40px;
+  background: linear-gradient(135deg, var(--gold), #e6a817);
+  color: #111;
+  border-radius: 28px;
+  font-weight: 800;
+  font-size: 1.05rem;
+  border: none;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-premium::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: linear-gradient(105deg, transparent 40%, rgba(255,255,255,0.25) 50%, transparent 60%);
+  transform: translateX(-100%);
+  transition: transform 0.5s;
+}
+.btn-premium:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(245,197,24,0.45); }
+.btn-premium:hover::after { transform: translateX(100%); }
+
+.premium-image {
+  font-size: 7rem;
+  color: var(--gold);
+  animation: float 4s ease-in-out infinite;
+  filter: drop-shadow(0 0 24px rgba(245,197,24,0.4));
+  flex-shrink: 0;
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50%       { transform: translateY(-18px) rotate(4deg); }
+}
+
+/* ─── Footer ─────────────────────────────────────────────────────────────────── */
+.footer {
+  background: var(--bg-deep);
+  border-top: 1px solid var(--border);
+  padding: 56px 0 24px;
+  margin-top: 60px;
+}
+
+.footer-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 36px;
+  margin-bottom: 40px;
+}
+
+.footer-section h3 { font-size: 1.2rem; font-weight: 800; margin-bottom: 16px; }
+.footer-section h4 {
+  font-size: 0.8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-3);
+  margin-bottom: 16px;
+}
+.footer-section p { color: var(--text-2); font-size: 0.9rem; margin-bottom: 20px; line-height: 1.7; }
+.footer-section ul { list-style: none; }
+.footer-section ul li { margin-bottom: 10px; }
+.footer-section ul li a { color: var(--text-2); font-size: 0.9rem; transition: color 0.2s, padding-left 0.2s; }
+.footer-section ul li a:hover { color: var(--purple-light); padding-left: 6px; }
+
+.social-links { display: flex; gap: 10px; }
+.social-links a {
+  width: 38px; height: 38px;
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text-2);
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+.social-links a:hover {
+  background: var(--purple);
+  border-color: var(--purple);
+  color: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 4px 14px var(--purple-glow-sm);
+}
+
+.newsletter-form { display: flex; gap: 8px; }
+.newsletter-form input {
+  flex: 1;
+  padding: 10px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: var(--bg-card);
+  color: var(--text-1);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.newsletter-form input:focus { border-color: var(--purple); }
+.newsletter-form button {
+  padding: 10px 20px;
+  background: linear-gradient(135deg, var(--purple), #5a3fa0);
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.newsletter-form button:hover { transform: scale(1.04); box-shadow: 0 4px 14px var(--purple-glow-sm); }
+
+.footer-bottom {
+  text-align: center;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+  color: var(--text-3);
+  font-size: 0.82rem;
+}
+
+/* ─── Toast ──────────────────────────────────────────────────────────────────── */
+#mr-toast {
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0.1px;
+}
+
+/* ─── Responsive ─────────────────────────────────────────────────────────────── */
+@media (max-width: 900px) {
+  .premium-content { flex-direction: column; text-align: center; }
+  .premium-text h2 { justify-content: center; }
+  .premium-text li { justify-content: center; }
+}
+
+@media (max-width: 768px) {
+  .header .container { flex-wrap: wrap; gap: 12px; }
+  .nav { order: 3; width: 100%; justify-content: center; gap: 16px; }
+  .header-actions { margin-left: 0; }
+  .search-box input { width: 140px; }
+  .hero-content h2 { font-size: 2rem; }
+  .hero-buttons { flex-direction: column; align-items: center; }
+  .manga-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 14px; }
+}
+
+@media (max-width: 480px) {
+  .manga-grid { grid-template-columns: repeat(2, 1fr); }
+  .genre-grid { grid-template-columns: repeat(3, 1fr); }
+  .section-title { font-size: 1.2rem; }
+  .premium-content { padding: 28px 20px; }
+}
+
+/* ─── View Transitions API (Chrome 126+, fallback silencioso) ────────────────── */
+@view-transition { navigation: auto; }
+
+/* Navbar persiste entre páginas sem piscar */
+.header { view-transition-name: site-header; }
+.logo h1 { view-transition-name: site-logo; }
+
+/* Animação da página inteira */
+::view-transition-old(root) {
+  animation: 250ms cubic-bezier(0.4, 0, 1, 1) both vt-fade-out;
+}
+::view-transition-new(root) {
+  animation: 320ms cubic-bezier(0, 0, 0.2, 1) 80ms both vt-fade-in;
+}
+/* Header desliza suavemente em vez de piscar */
+::view-transition-old(site-header),
+::view-transition-new(site-header) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-old(site-logo),
+::view-transition-new(site-logo) {
+  animation: none;
+}
+
+@keyframes vt-fade-out {
+  to { opacity: 0; transform: translateY(-6px) scale(0.99); }
+}
+@keyframes vt-fade-in {
+  from { opacity: 0; transform: translateY(6px) scale(0.99); }
+}
