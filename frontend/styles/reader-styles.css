@@ -11,7 +11,7 @@
 
 /* Sidebar Ads */
 .sidebar-ad {
-    width: 180px;
+    width: 300px;
     flex-shrink: 0;
     position: sticky;
     top: 100px;
@@ -340,8 +340,12 @@ body.premium-user .reader-container {
 }
 
 /* Responsive */
+@media (max-width: 1400px) {
+    .sidebar-ad { width: 240px; }
+}
+
 @media (max-width: 1200px) {
-    .sidebar-ad { width: 160px; }
+    .sidebar-ad { width: 200px; }
 }
 
 @media (max-width: 992px) {
