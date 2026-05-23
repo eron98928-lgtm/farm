@@ -184,9 +184,62 @@
                     <a href="/reader" class="btn-read">Ler</a>
                 </div>
 
+                <!-- Itens extras (ocultos inicialmente) -->
+                <div class="manga-list-item extra-item" style="display:none">
+                    <img src="https://cdn.myanimelist.net/images/manga/2/253146l.jpg" alt="One Piece">
+                    <div class="list-info">
+                        <h4>One Piece</h4>
+                        <p>Capítulo 1097 - O Nascimento de Bonney</p>
+                        <span class="time">Há 1 dia</span>
+                    </div>
+                    <a href="/reader" class="btn-read">Ler</a>
+                </div>
+
+                <div class="manga-list-item extra-item" style="display:none">
+                    <img src="https://cdn.myanimelist.net/images/manga/3/210341l.jpg" alt="Jujutsu Kaisen">
+                    <div class="list-info">
+                        <h4>Jujutsu Kaisen</h4>
+                        <p>Capítulo 244 - Fusão</p>
+                        <span class="time">Há 1 dia</span>
+                    </div>
+                    <a href="/reader" class="btn-read">Ler</a>
+                </div>
+
+                <div class="manga-list-item extra-item" style="display:none">
+                    <img src="https://cdn.myanimelist.net/images/manga/1/209370l.jpg" alt="My Hero Academia">
+                    <div class="list-info">
+                        <h4>My Hero Academia</h4>
+                        <p>Capítulo 409 - Força Final</p>
+                        <span class="time">Há 2 dias</span>
+                    </div>
+                    <a href="/reader" class="btn-read">Ler</a>
+                </div>
+
+                <div class="manga-list-item extra-item" style="display:none">
+                    <img src="https://cdn.myanimelist.net/images/manga/3/179023l.jpg" alt="Demon Slayer">
+                    <div class="list-info">
+                        <h4>Demon Slayer</h4>
+                        <p>Capítulo 204 - Amanhecer</p>
+                        <span class="time">Há 3 dias</span>
+                    </div>
+                    <a href="/reader" class="btn-read">Ler</a>
+                </div>
+
+                <div class="manga-list-item extra-item" style="display:none">
+                    <img src="https://cdn.myanimelist.net/images/manga/3/216464l.jpg" alt="Chainsaw Man">
+                    <div class="list-info">
+                        <h4>Chainsaw Man</h4>
+                        <p>Capítulo 149 - Retorno</p>
+                        <span class="time">Há 4 dias</span>
+                    </div>
+                    <a href="/reader" class="btn-read">Ler</a>
+                </div>
+
             </div>
             <div class="view-all">
-                <a href="#lancamentos" class="btn-view-all">Ver Todos <i class="fas fa-arrow-right"></i></a>
+                <button class="btn-view-all" id="ver-todos-btn" onclick="toggleVerTodos()">
+                    Ver Todos <i class="fas fa-arrow-right" id="ver-todos-icon"></i>
+                </button>
             </div>
         </div>
     </section>
@@ -324,6 +377,19 @@
                 input.placeholder = 'Inscrito! Obrigado ✓';
                 setTimeout(() => input.placeholder = 'Seu email', 3000);
             }
+        }
+
+        // Ver Todos
+        let todosAbertos = false;
+        function toggleVerTodos() {
+            todosAbertos = !todosAbertos;
+            document.querySelectorAll('.extra-item').forEach(el => {
+                el.style.display = todosAbertos ? 'flex' : 'none';
+            });
+            const btn = document.getElementById('ver-todos-btn');
+            const icon = document.getElementById('ver-todos-icon');
+            btn.childNodes[0].textContent = todosAbertos ? 'Ver Menos ' : 'Ver Todos ';
+            icon.className = todosAbertos ? 'fas fa-arrow-up' : 'fas fa-arrow-right';
         }
 
         // Scroll suave nas âncoras
