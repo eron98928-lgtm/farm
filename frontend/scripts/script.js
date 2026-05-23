@@ -36,11 +36,20 @@ document.addEventListener('DOMContentLoaded', function() {
     if (newsletterForm) {
         newsletterForm.addEventListener('submit', function(e) {
             e.preventDefault();
-            const email = this.querySelector('input[type="email"]').value;
-            if (email) {
-                showToast('Inscrição realizada! Verifique seu e-mail para confirmar.');
-                this.reset();
+            const input = this.querySelector('input[type="email"]');
+            const emailVal = (input.value || '').trim();
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailVal)) {
+                showToast('Digite um e-mail válido.');
+                input.focus();
+                return;
             }
+            const btn = this.querySelector('button');
+            if (btn) { btn.disabled = true; btn.textContent = '✓'; }
+            showToast('Inscrição realizada! Verifique seu e-mail.');
+            setTimeout(() => {
+                this.reset();
+                if (btn) { btn.disabled = false; btn.textContent = 'Inscrever'; }
+            }, 2000);
         });
     }
 
@@ -152,7 +161,34 @@ const Analytics = {
     }
 };
 
-window.MangaReader = { Favorites, ReadingHistory, ThemeManager, Analytics, showToast };
+const ErrorTracker = {
+    _queue: [],
+    capture: function(type, msg, src, line) {
+        const entry = { type, msg, src, line, url: location.href, ts: new Date().toISOString() };
+        this._queue.push(entry);
+        try {
+            const stored = JSON.parse(localStorage.getItem('_mr_errors') || '[]');
+            stored.push(entry);
+            localStorage.setItem('_mr_errors', JSON.stringify(stored.slice(-50)));
+        } catch(e) {}
+    }
+};
+
+window.addEventListener('error', function(e) {
+    ErrorTracker.capture('error', e.message, e.filename, e.lineno);
+});
+window.addEventListener('unhandledrejection', function(e) {
+    ErrorTracker.capture('promise', String(e.reason), '', 0);
+});
+
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible' && document.body.style.overflow === 'hidden') {
+        const hasOpenModal = document.querySelector('[style*="position:fixed"][style*="z-index"], .settings-modal, .checkout-modal');
+        if (!hasOpenModal) document.body.style.overflow = '';
+    }
+});
+
+window.MangaReader = { Favorites, ReadingHistory, ThemeManager, Analytics, ErrorTracker, showToast };
 
 (function initImageFallbacks() {
     const palettes = [

@@ -141,22 +141,23 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     function showSettingsModal() {
+        if (document.querySelector('.settings-modal')) return;
         const modal = document.createElement('div');
         modal.className = 'settings-modal';
         modal.innerHTML = `
             <div class="modal-content">
                 <div class="modal-header">
                     <h3>Configurações de Leitura</h3>
-                    <button class="modal-close">&times;</button>
+                    <button class="modal-close" aria-label="Fechar">&times;</button>
                 </div>
                 <div class="modal-body">
                     <div class="setting-item">
-                        <label>Brilho da Tela</label>
-                        <input type="range" min="50" max="100" value="100" class="brightness-slider">
+                        <label for="brightness-slider">Brilho</label>
+                        <input id="brightness-slider" type="range" min="50" max="100" value="100" class="brightness-slider">
                     </div>
                     <div class="setting-item">
-                        <label>Tamanho da Página</label>
-                        <select class="page-size-select">
+                        <label for="page-size-select">Tamanho</label>
+                        <select id="page-size-select" class="page-size-select">
                             <option value="100">100%</option>
                             <option value="90">90%</option>
                             <option value="80">80%</option>
@@ -164,17 +165,31 @@ document.addEventListener('DOMContentLoaded', function() {
                         </select>
                     </div>
                     <div class="setting-item">
-                        <label>Modo Noturno</label>
-                        <input type="checkbox" id="night-mode" checked>
+                        <label for="night-mode">Modo Noturno</label>
+                        <input id="night-mode" type="checkbox" checked>
                     </div>
                 </div>
             </div>
         `;
-        modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:10000;';
+        modal.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:200;';
+        document.body.style.overflow = 'hidden';
         document.body.appendChild(modal);
 
-        modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
-        modal.addEventListener('click', e => { if (e.target === modal) modal.remove(); });
+        const closeModal = () => {
+            modal.remove();
+            document.body.style.overflow = '';
+        };
+
+        modal.querySelector('.modal-close').addEventListener('click', closeModal);
+        modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+
+        modal.querySelector('.brightness-slider').addEventListener('input', function() {
+            document.querySelector('.manga-pages').style.filter = `brightness(${this.value}%)`;
+        });
+
+        modal.querySelector('.page-size-select').addEventListener('change', function() {
+            document.querySelector('.manga-pages').style.maxWidth = this.value === '100' ? '' : this.value + '%';
+        });
     }
 
     document.addEventListener('keydown', function(e) {
