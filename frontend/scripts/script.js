@@ -1,37 +1,21 @@
-// Script principal do MangaReader
-
-// Pesquisa de mangás
 document.addEventListener('DOMContentLoaded', function() {
     const searchInput = document.querySelector('.search-box input');
     const searchButton = document.querySelector('.search-box button');
 
     if (searchButton && searchInput) {
-        searchButton.addEventListener('click', function() {
+        const doSearch = () => {
             const query = searchInput.value.trim();
             if (query) {
-                alert(`Buscando por: ${query}`);
-                // Aqui você implementaria a lógica de busca real
+                window.location.href = `/?q=${encodeURIComponent(query)}`;
             }
-        });
-
+        };
+        searchButton.addEventListener('click', doSearch);
         searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                const query = searchInput.value.trim();
-                if (query) {
-                    alert(`Buscando por: ${query}`);
-                }
-            }
+            if (e.key === 'Enter') doSearch();
         });
     }
 
-    // Animação dos cards de mangá
     const mangaCards = document.querySelectorAll('.manga-card, .manga-list-item');
-    
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
-
     const observer = new IntersectionObserver(function(entries) {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
@@ -39,7 +23,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 entry.target.style.transform = 'translateY(0)';
             }
         });
-    }, observerOptions);
+    }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
 
     mangaCards.forEach(card => {
         card.style.opacity = '0';
@@ -48,58 +32,61 @@ document.addEventListener('DOMContentLoaded', function() {
         observer.observe(card);
     });
 
-    // Newsletter form
     const newsletterForm = document.querySelector('.newsletter-form');
     if (newsletterForm) {
         newsletterForm.addEventListener('submit', function(e) {
             e.preventDefault();
             const email = this.querySelector('input[type="email"]').value;
             if (email) {
-                alert(`Obrigado por se inscrever! Enviamos um email de confirmação para: ${email}`);
+                showToast('Inscrição realizada! Verifique seu e-mail para confirmar.');
                 this.reset();
             }
         });
     }
 
-    // Botões de leitura
-    const readButtons = document.querySelectorAll('.btn-read');
-    readButtons.forEach(button => {
-        button.addEventListener('click', function(e) {
-            // Em produção, isso levaria à página do leitor
-            console.log('Indo para o leitor...');
-        });
-    });
-
-    // Menu mobile (se necessário)
     createMobileMenu();
 });
 
-// Função para criar menu mobile
 function createMobileMenu() {
     const nav = document.querySelector('.nav');
-    const header = document.querySelector('.header .container');
-    
-    if (window.innerWidth <= 768) {
+    if (window.innerWidth <= 768 && nav) {
         const menuToggle = document.createElement('button');
         menuToggle.className = 'menu-toggle';
         menuToggle.innerHTML = '<i class="fas fa-bars"></i>';
-        menuToggle.style.cssText = `
-            background: transparent;
-            border: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            display: block;
-        `;
-        
-        // Adicionar funcionalidade de toggle
+        menuToggle.style.cssText = 'background:transparent;border:none;color:white;font-size:1.5rem;cursor:pointer;display:block;';
         menuToggle.addEventListener('click', function() {
             nav.classList.toggle('active');
         });
     }
 }
 
-// Sistema de favoritos (localStorage)
+function showToast(message, duration) {
+    duration = duration || 3000;
+    const existing = document.querySelector('.mr-toast');
+    if (existing) existing.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'mr-toast';
+    toast.textContent = message;
+    toast.style.cssText = `
+        position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);
+        background:var(--surface,#1a1b2e);border:1px solid var(--border,#2a2b3d);
+        color:var(--text,#fff);padding:12px 24px;border-radius:8px;font-size:0.93rem;
+        z-index:99999;opacity:0;transition:all 0.3s ease;white-space:nowrap;
+        box-shadow:0 8px 24px rgba(0,0,0,0.5);
+    `;
+    document.body.appendChild(toast);
+    requestAnimationFrame(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateX(-50%) translateY(0)';
+    });
+    setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(-50%) translateY(10px)';
+        setTimeout(() => toast.remove(), 300);
+    }, duration);
+}
+
 const Favorites = {
     add: function(mangaId, mangaData) {
         let favorites = this.getAll();
@@ -110,100 +97,63 @@ const Favorites = {
         }
         return false;
     },
-    
     remove: function(mangaId) {
-        let favorites = this.getAll();
-        favorites = favorites.filter(f => f.id !== mangaId);
+        let favorites = this.getAll().filter(f => f.id !== mangaId);
         localStorage.setItem('mangaFavorites', JSON.stringify(favorites));
     },
-    
     getAll: function() {
         return JSON.parse(localStorage.getItem('mangaFavorites') || '[]');
     },
-    
     isFavorite: function(mangaId) {
         return this.getAll().some(f => f.id === mangaId);
     }
 };
 
-// Sistema de histórico de leitura
 const ReadingHistory = {
     add: function(mangaId, chapterNumber, mangaData) {
         let history = this.getAll();
         const existingIndex = history.findIndex(h => h.id === mangaId);
-        
-        const entry = {
-            id: mangaId,
-            chapter: chapterNumber,
-            lastRead: new Date().toISOString(),
-            ...mangaData
-        };
-        
+        const entry = { id: mangaId, chapter: chapterNumber, lastRead: new Date().toISOString(), ...mangaData };
         if (existingIndex >= 0) {
             history[existingIndex] = entry;
         } else {
             history.unshift(entry);
         }
-        
-        // Manter apenas os últimos 50 itens
-        history = history.slice(0, 50);
-        localStorage.setItem('readingHistory', JSON.stringify(history));
+        localStorage.setItem('readingHistory', JSON.stringify(history.slice(0, 50)));
     },
-    
     getAll: function() {
         return JSON.parse(localStorage.getItem('readingHistory') || '[]');
     }
 };
 
-// Sistema de tema (claro/escuro)
 const ThemeManager = {
     setTheme: function(theme) {
         localStorage.setItem('theme', theme);
         document.documentElement.setAttribute('data-theme', theme);
     },
-    
     getTheme: function() {
         return localStorage.getItem('theme') || 'dark';
     },
-    
     toggleTheme: function() {
-        const current = this.getTheme();
-        const newTheme = current === 'dark' ? 'light' : 'dark';
-        this.setTheme(newTheme);
+        this.setTheme(this.getTheme() === 'dark' ? 'light' : 'dark');
     }
 };
 
-// Analytics simples para rastrear leituras
 const Analytics = {
     trackPageView: function(pageName) {
-        console.log(`Page view: ${pageName}`);
-        // Em produção, integraria com Google Analytics ou similar
+        let views = JSON.parse(localStorage.getItem('analytics_views') || '[]');
+        views.push({ page: pageName, timestamp: new Date().toISOString() });
+        localStorage.setItem('analytics_views', JSON.stringify(views.slice(-200)));
     },
-    
     trackMangaRead: function(mangaId, chapterNumber) {
-        console.log(`Manga read: ${mangaId}, Chapter: ${chapterNumber}`);
-        // Salvar no localStorage para sincronização futura
         let reads = JSON.parse(localStorage.getItem('analytics_reads') || '[]');
-        reads.push({
-            mangaId,
-            chapter: chapterNumber,
-            timestamp: new Date().toISOString()
-        });
+        reads.push({ mangaId, chapter: chapterNumber, timestamp: new Date().toISOString() });
         localStorage.setItem('analytics_reads', JSON.stringify(reads.slice(-100)));
     }
 };
 
-// Exportar funções para uso global
-window.MangaReader = {
-    Favorites,
-    ReadingHistory,
-    ThemeManager,
-    Analytics
-};
+window.MangaReader = { Favorites, ReadingHistory, ThemeManager, Analytics, showToast };
 
-console.log('MangaReader initialized successfully!');
-
-// Fallback para imagens quebradas (via.placeholder.com offline etc)
 (function initImageFallbacks() {
     const palettes = [
         ['#e63946', '#c1121f'],
@@ -217,12 +167,10 @@ console.log('MangaReader initialized successfully!');
         const label = (alt || 'MR').substring(0, 2).toUpperCase();
         const fs = Math.round(Math.min(w, h) * 0.22);
         const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
-            <defs>
-                <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stop-color="${colors[0]}"/>
-                    <stop offset="100%" stop-color="${colors[1]}"/>
-                </linearGradient>
-            </defs>
+            <defs><linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="${colors[0]}"/>
+                <stop offset="100%" stop-color="${colors[1]}"/>
+            </linearGradient></defs>
             <rect width="${w}" height="${h}" fill="url(#g)"/>
             <rect x="10%" y="10%" width="80%" height="80%" rx="8" fill="rgba(0,0,0,0.25)"/>
             <text x="50%" y="48%" text-anchor="middle" dominant-baseline="middle"

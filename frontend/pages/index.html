@@ -184,7 +184,6 @@
                     <a href="/reader" class="btn-read">Ler</a>
                 </div>
 
-                <!-- Itens extras (ocultos inicialmente) -->
                 <div class="manga-list-item extra-item" style="display:none">
                     <img src="https://cdn.myanimelist.net/images/manga/2/253146l.jpg" alt="One Piece">
                     <div class="list-info">
@@ -351,14 +350,13 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 MangaReader. Todos os direitos reservados.</p>
+                <p>&copy; 2026 MangaReader. Todos os direitos reservados.</p>
             </div>
         </div>
     </footer>
 
     <script src="../scripts/script.js"></script>
     <script>
-        // Busca
         document.getElementById('search-btn').addEventListener('click', doSearch);
         document.getElementById('search-input').addEventListener('keypress', e => {
             if (e.key === 'Enter') doSearch();
@@ -368,7 +366,6 @@
             if (q) window.location.href = '/reader?q=' + encodeURIComponent(q);
         }
 
-        // Newsletter
         function handleNewsletter(e) {
             e.preventDefault();
             const input = e.target.querySelector('input');
@@ -379,7 +376,6 @@
             }
         }
 
-        // Ver Todos
         let todosAbertos = false;
         function toggleVerTodos() {
             todosAbertos = !todosAbertos;
@@ -392,7 +388,6 @@
             icon.className = todosAbertos ? 'fas fa-arrow-up' : 'fas fa-arrow-right';
         }
 
-        // Scroll suave nas âncoras
         document.querySelectorAll('a[href^="#"]').forEach(a => {
             a.addEventListener('click', e => {
                 const id = a.getAttribute('href').slice(1);

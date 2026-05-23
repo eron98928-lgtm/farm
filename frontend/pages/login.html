@@ -253,7 +253,6 @@
                 <button class="auth-tab" id="tab-register" onclick="switchTab('register')">Criar conta</button>
             </div>
 
-            <!-- Login Form -->
             <form class="auth-form" id="login-form" onsubmit="handleAuth(event, 'login')">
                 <div class="form-group">
                     <label>E-mail</label>
@@ -272,7 +271,6 @@
                 <a href="#" class="btn-social"><i class="fab fa-discord"></i> Continuar com Discord</a>
             </form>
 
-            <!-- Register Form -->
             <form class="auth-form" id="register-form" style="display:none" onsubmit="handleAuth(event, 'register')">
                 <div class="form-group">
                     <label>Nome</label>
@@ -310,7 +308,7 @@
 
         function handleAuth(e, type) {
             e.preventDefault();
-            window.location.href = 'index.html';
+            window.location.href = '/';
         }
     </script>
 </body>

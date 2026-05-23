@@ -1,45 +1,25 @@
-// Script específico para a página Premium
-
 document.addEventListener('DOMContentLoaded', function() {
-    // FAQ Accordion
     const faqItems = document.querySelectorAll('.faq-item');
-    
     faqItems.forEach(item => {
-        const question = item.querySelector('.faq-question');
-        
-        question.addEventListener('click', function() {
+        item.querySelector('.faq-question').addEventListener('click', function() {
             const isActive = item.classList.contains('active');
-            
-            // Fecha todos os outros itens
-            faqItems.forEach(otherItem => {
-                otherItem.classList.remove('active');
-            });
-            
-            // Abre/fecha o item atual
-            if (!isActive) {
-                item.classList.add('active');
-            }
+            faqItems.forEach(o => o.classList.remove('active'));
+            if (!isActive) item.classList.add('active');
         });
     });
 
-    // Botões de assinatura
     const premiumButtons = document.querySelectorAll('.btn-plan.premium, .btn-cta');
-    
     premiumButtons.forEach(button => {
         button.addEventListener('click', function(e) {
             e.preventDefault();
-            
-            // Em produção, isso abriria o checkout
-            const planType = this.classList.contains('btn-cta') ? 'Mensal' : 
-                           this.textContent.includes('Anual') ? 'Anual' : 'Mensal';
-            
+            const planType = this.classList.contains('btn-cta') ? 'Mensal' :
+                this.textContent.includes('Anual') ? 'Anual' : 'Mensal';
+            trackConversion(planType);
             showCheckoutModal(planType);
         });
     });
 
-    // Animação dos cards de preço ao scroll
     const pricingCards = document.querySelectorAll('.pricing-card');
-    
     const priceObserver = new IntersectionObserver(function(entries) {
         entries.forEach((entry, index) => {
             if (entry.isIntersecting) {
@@ -57,14 +37,9 @@ document.addEventListener('DOMContentLoaded', function() {
         card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
         priceObserver.observe(card);
     });
-
-    // Counter animation para preços
-    animateCounter();
 });
 
-// Modal de Checkout
 function showCheckoutModal(planType) {
-    // Criar modal dinamicamente
     const modal = document.createElement('div');
     modal.className = 'checkout-modal';
     modal.innerHTML = `
@@ -98,191 +73,83 @@ function showCheckoutModal(planType) {
         </div>
     `;
 
-    // Adicionar estilos do modal
     const style = document.createElement('style');
     style.textContent = `
-        .checkout-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.8);
-        }
-        
-        .modal-content {
-            position: relative;
-            background: var(--card-bg);
-            padding: 40px;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            text-align: center;
-            border: 2px solid var(--gold);
-        }
-        
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 20px;
-            background: transparent;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 2rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        
-        .modal-close:hover {
-            color: var(--text-primary);
-        }
-        
-        .modal-content h2 {
-            margin-bottom: 10px;
-            color: var(--text-primary);
-        }
-        
-        .plan-info {
-            color: var(--primary-color);
-            font-weight: 600;
-            margin-bottom: 30px;
-        }
-        
-        .payment-options {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .payment-option {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: 2px solid transparent;
-        }
-        
-        .payment-option:hover {
-            border-color: var(--primary-color);
-            background: rgba(102, 126, 234, 0.1);
-        }
-        
-        .payment-option i {
-            font-size: 2rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            display: block;
-        }
-        
-        .payment-option span {
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
-        
-        .secure-badge {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            color: #4ecdc4;
-            font-size: 0.9rem;
-        }
-        
-        .secure-badge i {
-            font-size: 1.2rem;
-        }
+        .checkout-modal{position:fixed;top:0;left:0;width:100%;height:100%;z-index:9999;display:flex;align-items:center;justify-content:center;}
+        .modal-overlay{position:absolute;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.8);}
+        .modal-content{position:relative;background:var(--surface,#1a1b2e);padding:40px;border-radius:20px;max-width:500px;width:90%;text-align:center;border:2px solid var(--gold,#f5c518);}
+        .modal-close{position:absolute;top:15px;right:20px;background:transparent;border:none;color:var(--muted,#888);font-size:2rem;cursor:pointer;transition:color 0.2s;}
+        .modal-close:hover{color:var(--text,#fff);}
+        .modal-content h2{margin-bottom:10px;color:var(--text,#fff);}
+        .plan-info{color:var(--crimson,#e63946);font-weight:600;margin-bottom:30px;}
+        .payment-options{display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin-bottom:30px;}
+        .payment-option{background:rgba(255,255,255,0.05);padding:20px;border-radius:10px;cursor:pointer;transition:all 0.2s;border:2px solid transparent;}
+        .payment-option:hover{border-color:var(--crimson,#e63946);background:rgba(230,57,70,0.1);}
+        .payment-option i{font-size:2rem;color:var(--crimson,#e63946);margin-bottom:10px;display:block;}
+        .payment-option span{color:var(--muted,#888);font-weight:600;}
+        .payment-option.selected{border-color:var(--crimson,#e63946);background:rgba(230,57,70,0.15);}
+        .secure-badge{display:flex;align-items:center;justify-content:center;gap:10px;color:#2ec4b6;font-size:0.9rem;}
+        .secure-badge i{font-size:1.2rem;}
+        .btn-confirm-payment{display:block;width:100%;margin-top:20px;padding:14px;background:var(--gold,#f5c518);color:#08090f;border:none;border-radius:10px;font-size:1rem;font-weight:800;cursor:pointer;transition:all 0.2s;}
+        .btn-confirm-payment:hover{background:#e2b800;transform:translateY(-1px);}
+        .btn-confirm-payment:disabled{opacity:0.5;cursor:not-allowed;transform:none;}
     `;
 
     document.head.appendChild(style);
     document.body.appendChild(modal);
 
-    // Fechar modal
     const closeBtn = modal.querySelector('.modal-close');
     const overlay = modal.querySelector('.modal-overlay');
-    
-    closeBtn.addEventListener('click', () => {
-        closeModal(modal, style);
-    });
-    
-    overlay.addEventListener('click', () => {
-        closeModal(modal, style);
+    closeBtn.addEventListener('click', () => closeModal(modal, style));
+    overlay.addEventListener('click', () => closeModal(modal, style));
+
+    let selectedMethod = null;
+    const confirmBtn = document.createElement('button');
+    confirmBtn.className = 'btn-confirm-payment';
+    confirmBtn.textContent = 'Confirmar Pagamento';
+    confirmBtn.disabled = true;
+    modal.querySelector('.modal-content').appendChild(confirmBtn);
+
+    modal.querySelectorAll('.payment-option').forEach(option => {
+        option.addEventListener('click', function() {
+            modal.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+            this.classList.add('selected');
+            selectedMethod = this.dataset.method;
+            confirmBtn.disabled = false;
+        });
     });
 
-    // Selecionar forma de pagamento
-    const paymentOptions = modal.querySelectorAll('.payment-option');
-    paymentOptions.forEach(option => {
-        option.addEventListener('click', function() {
-            const method = this.dataset.method;
-            alert(`Redirecionando para pagamento via ${method}...`);
-            // Em produção, redirecionaria para o gateway de pagamento
-        });
+    confirmBtn.addEventListener('click', function() {
+        if (!selectedMethod) return;
+        this.textContent = 'Aguarde...';
+        this.disabled = true;
+        setTimeout(() => closeModal(modal, style), 1200);
     });
 }
 
 function closeModal(modal, style) {
     modal.style.opacity = '0';
     modal.style.transition = 'opacity 0.3s ease';
-    
     setTimeout(() => {
         modal.remove();
-        style.remove();
+        if (style) style.remove();
     }, 300);
 }
 
-// Animação de contador
-function animateCounter() {
-    const counters = document.querySelectorAll('.price');
-    
-    counters.forEach(counter => {
-        const text = counter.textContent;
-        // Aqui você pode implementar animação de números se necessário
-    });
-}
-
-// Tracking de conversão
 function trackConversion(planType) {
-    // Em produção, integraria com Google Analytics, Facebook Pixel, etc.
-    console.log(`Conversão: Plano ${planType} selecionado`);
-    
-    // Salvar no localStorage para análise
     let conversions = JSON.parse(localStorage.getItem('premium_conversions') || '[]');
-    conversions.push({
-        plan: planType,
-        timestamp: new Date().toISOString(),
-        source: document.referrer || 'direct'
-    });
+    conversions.push({ plan: planType, timestamp: new Date().toISOString(), source: document.referrer || 'direct' });
     localStorage.setItem('premium_conversions', JSON.stringify(conversions));
 }
 
-// Sistema de teste A/B (opcional)
 const ABTest = {
-    variants: {
-        pricing: ['default', 'highlighted', 'minimal']
-    },
-    
+    variants: { pricing: ['default', 'highlighted', 'minimal'] },
     getVariant: function(testName) {
         const saved = localStorage.getItem(`abtest_${testName}`);
         if (saved) return saved;
-        
         const variants = this.variants[testName];
         const random = variants[Math.floor(Math.random() * variants.length)];
         localStorage.setItem(`abtest_${testName}`, random);
         return random;
     }
 };
-
-console.log('Premium page initialized!');
