@@ -1,10 +1,14 @@
 {
   "outputDirectory": "frontend",
   "routes": [
-    { "src": "/",        "dest": "/pages/index.html"   },
-    { "src": "/login",   "dest": "/pages/login.html"   },
-    { "src": "/premium", "dest": "/pages/premium.html" },
-    { "src": "/reader",  "dest": "/pages/reader.html"  },
-    { "src": "/(.*)",    "dest": "/$1"                 }
+    { "src": "/",                "dest": "/pages/index.html"   },
+    { "src": "/index.html(.*)", "dest": "/pages/index.html"   },
+    { "src": "/login",           "dest": "/pages/login.html"   },
+    { "src": "/login.html(.*)", "dest": "/pages/login.html"   },
+    { "src": "/premium",         "dest": "/pages/premium.html" },
+    { "src": "/premium.html(.*)", "dest": "/pages/premium.html" },
+    { "src": "/reader",          "dest": "/pages/reader.html"  },
+    { "src": "/reader.html(.*)", "dest": "/pages/reader.html"  },
+    { "src": "/(.*)",            "dest": "/$1"                 }
   ]
 }

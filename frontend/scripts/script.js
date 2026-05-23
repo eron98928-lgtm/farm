@@ -202,3 +202,49 @@ window.MangaReader = {
 };
 
 console.log('MangaReader initialized successfully!');
+
+// Fallback para imagens quebradas (via.placeholder.com offline etc)
+(function initImageFallbacks() {
+    const palettes = [
+        ['#e63946', '#c1121f'],
+        ['#7c3aed', '#5b21b6'],
+        ['#2ec4b6', '#0a9396'],
+        ['#f5c518', '#b5942b'],
+        ['#e63946', '#7c3aed'],
+    ];
+
+    function makeSVG(alt, w, h, colors) {
+        const label = (alt || 'MR').substring(0, 2).toUpperCase();
+        const fs = Math.round(Math.min(w, h) * 0.22);
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
+            <defs>
+                <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stop-color="${colors[0]}"/>
+                    <stop offset="100%" stop-color="${colors[1]}"/>
+                </linearGradient>
+            </defs>
+            <rect width="${w}" height="${h}" fill="url(#g)"/>
+            <rect x="10%" y="10%" width="80%" height="80%" rx="8" fill="rgba(0,0,0,0.25)"/>
+            <text x="50%" y="48%" text-anchor="middle" dominant-baseline="middle"
+                fill="rgba(255,255,255,0.9)" font-size="${fs}" font-weight="bold"
+                font-family="sans-serif">${label}</text>
+            <text x="50%" y="72%" text-anchor="middle" dominant-baseline="middle"
+                fill="rgba(255,255,255,0.55)" font-size="${Math.round(fs*0.28)}"
+                font-family="sans-serif">${(alt||'').substring(0,18)}</text>
+        </svg>`;
+        return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+    }
+
+    let idx = 0;
+    document.querySelectorAll('img').forEach(img => {
+        const palette = palettes[idx++ % palettes.length];
+        const handler = function() {
+            const w = this.naturalWidth || this.width || 300;
+            const h = this.naturalHeight || this.height || 450;
+            this.src = makeSVG(this.alt, w || 300, h || 450, palette);
+            this.onerror = null;
+        };
+        img.onerror = handler;
+        if (img.complete && img.naturalWidth === 0) handler.call(img);
+    });
+})();
