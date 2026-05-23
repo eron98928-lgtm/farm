@@ -1,0 +1,10 @@
+{
+  "outputDirectory": "frontend",
+  "routes": [
+    { "src": "/",        "dest": "/pages/index.html"   },
+    { "src": "/login",   "dest": "/pages/login.html"   },
+    { "src": "/premium", "dest": "/pages/premium.html" },
+    { "src": "/reader",  "dest": "/pages/reader.html"  },
+    { "src": "/(.*)",    "dest": "/$1"                 }
+  ]
+}
