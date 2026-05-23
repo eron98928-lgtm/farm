@@ -1,0 +1,397 @@
+/* Reader Page Styles */
+
+.reader-container {
+    display: flex;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 20px;
+    min-height: calc(100vh - 200px);
+}
+
+/* Sidebar Ads */
+.sidebar-ad {
+    width: 180px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 100px;
+    height: fit-content;
+}
+
+.ad-container {
+    background: var(--surface-2);
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid var(--border);
+}
+
+.ad-label {
+    background: rgba(0,0,0,0.4);
+    color: var(--muted);
+    font-size: 0.7rem;
+    text-align: center;
+    padding: 5px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+.ad-content {
+    padding: 10px;
+}
+
+.ad-content img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 5px;
+}
+
+body.premium-user .sidebar-ad {
+    display: none;
+}
+
+body.premium-user .reader-container {
+    justify-content: center;
+}
+
+/* Reading Area */
+.reading-area {
+    flex: 1;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+/* Chapter Header */
+.chapter-header {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.chapter-info {
+    text-align: center;
+    flex: 1;
+}
+
+.chapter-info h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 1.5rem;
+    letter-spacing: 0.06em;
+    color: var(--text);
+    margin-bottom: 4px;
+}
+
+.chapter-info p {
+    color: var(--muted);
+    font-size: 0.88rem;
+}
+
+.chapter-options {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.btn-option {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-option:hover {
+    background: var(--crimson);
+    border-color: var(--crimson);
+    color: white;
+}
+
+.btn-chapter-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 22px;
+    background: var(--crimson);
+    color: white;
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 700;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.btn-chapter-nav:hover {
+    background: var(--crimson-2);
+    transform: translateY(-2px);
+}
+
+/* Manga Pages */
+.manga-pages {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.page-container {
+    position: relative;
+    background: #000;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.page-container::after {
+    content: '';
+    position: absolute;
+    top: 20px; left: 20px; right: 20px; bottom: 20px;
+    background-image: var(--page-bg-image, none);
+    background-size: cover;
+    background-position: center;
+    filter: blur(50px) saturate(1.8);
+    opacity: 0.28;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.page-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    position: relative;
+    z-index: 1;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* Chapter Footer */
+.chapter-footer {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin-top: 20px;
+}
+
+.footer-nav {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.btn-footer-nav {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 11px 20px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+}
+
+.btn-footer-nav:hover {
+    border-color: rgba(255,255,255,0.2);
+    color: var(--text);
+}
+
+.btn-footer-nav.primary {
+    background: var(--crimson);
+    border-color: var(--crimson);
+    color: white;
+}
+
+.btn-footer-nav.primary:hover {
+    background: var(--crimson-2);
+    border-color: var(--crimson-2);
+    transform: translateY(-1px);
+}
+
+.reading-progress {
+    text-align: center;
+}
+
+.reading-progress p {
+    color: var(--muted);
+    font-size: 0.88rem;
+    margin-bottom: 10px;
+}
+
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--surface-2);
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--crimson), var(--indigo));
+    border-radius: 6px;
+    transition: width 0.3s ease;
+}
+
+/* Premium Upgrade Banner */
+.premium-upgrade-banner {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: var(--surface);
+    border: 1px solid rgba(245,197,24,0.3);
+    border-radius: 12px;
+    padding: 18px 28px;
+    z-index: 999;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    animation: slideUp 0.4s ease;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateX(-50%) translateY(40px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+.banner-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.banner-text {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text);
+    font-size: 0.97rem;
+}
+
+.banner-text i {
+    color: var(--gold);
+    font-size: 1.4rem;
+}
+
+.btn-banner {
+    padding: 9px 22px;
+    background: var(--gold);
+    color: #08090f;
+    border-radius: 8px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.btn-banner:hover {
+    background: #e2b800;
+    transform: scale(1.03);
+}
+
+.btn-close-banner {
+    background: transparent;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    padding: 5px;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.btn-close-banner:hover {
+    color: var(--text);
+    transform: rotate(90deg);
+}
+
+/* Premium button in header */
+.btn-premium-small {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 18px;
+    background: var(--gold);
+    color: #08090f;
+    border-radius: 6px;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 800;
+    font-size: 0.88rem;
+    transition: all 0.2s ease;
+}
+
+.btn-premium-small:hover {
+    background: #e2b800;
+    transform: translateY(-1px);
+}
+
+/* Responsive */
+@media (max-width: 1200px) {
+    .sidebar-ad { width: 160px; }
+}
+
+@media (max-width: 992px) {
+    .reader-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .sidebar-ad {
+        width: 100%;
+        max-width: 320px;
+        position: static;
+        order: 2;
+    }
+
+    .sidebar-ad.left-sidebar  { order: 1; }
+    .sidebar-ad.right-sidebar { order: 3; }
+    .reading-area { order: 2; width: 100%; }
+}
+
+@media (max-width: 768px) {
+    .chapter-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .chapter-nav {
+        width: 100%;
+        display: flex;
+        justify-content: center;
+    }
+
+    .footer-nav { flex-direction: column; }
+
+    .btn-footer-nav { justify-content: center; }
+
+    .premium-upgrade-banner {
+        left: 10px;
+        right: 10px;
+        transform: none;
+        width: calc(100% - 20px);
+    }
+
+    .banner-content {
+        flex-direction: column;
+        text-align: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .reader-container { padding: 10px; }
+    .chapter-header, .chapter-footer { padding: 14px; }
+}
