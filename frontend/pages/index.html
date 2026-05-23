@@ -314,20 +314,20 @@
                     <h3><i class="fas fa-book-open"></i> MangaReader</h3>
                     <p>A melhor plataforma de leitura de mangás online. Milhares de títulos disponíveis gratuitamente.</p>
                     <div class="social-links">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
-                        <a href="#"><i class="fab fa-discord"></i></a>
+                        <a href="javascript:void(0)"><i class="fab fa-facebook"></i></a>
+                        <a href="javascript:void(0)"><i class="fab fa-twitter"></i></a>
+                        <a href="javascript:void(0)"><i class="fab fa-instagram"></i></a>
+                        <a href="javascript:void(0)"><i class="fab fa-discord"></i></a>
                     </div>
                 </div>
                 <div class="footer-section">
                     <h4>Links Úteis</h4>
                     <ul>
-                        <li><a href="#">Sobre Nós</a></li>
-                        <li><a href="#">Termos de Uso</a></li>
-                        <li><a href="#">Política de Privacidade</a></li>
-                        <li><a href="#">DMCA</a></li>
-                        <li><a href="#">Contato</a></li>
+                        <li><a href="javascript:void(0)">Sobre Nós</a></li>
+                        <li><a href="javascript:void(0)">Termos de Uso</a></li>
+                        <li><a href="javascript:void(0)">Política de Privacidade</a></li>
+                        <li><a href="javascript:void(0)">DMCA</a></li>
+                        <li><a href="javascript:void(0)">Contato</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -368,12 +368,15 @@
 
         function handleNewsletter(e) {
             e.preventDefault();
-            const input = e.target.querySelector('input');
-            if (input.value) {
-                input.value = '';
-                input.placeholder = 'Inscrito! Obrigado ✓';
-                setTimeout(() => input.placeholder = 'Seu email', 3000);
+            const input = e.target.querySelector('input[type="email"]');
+            const val = (input.value || '').trim();
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(val)) {
+                input.focus();
+                return;
             }
+            input.value = '';
+            input.placeholder = 'Inscrito! Obrigado ✓';
+            setTimeout(() => input.placeholder = 'Seu email', 3000);
         }
 
         let todosAbertos = false;
