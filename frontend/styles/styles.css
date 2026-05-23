@@ -353,6 +353,9 @@ a {
     position: relative;
     transform-style: preserve-3d;
     perspective: 1000px;
+    display: block;
+    color: inherit;
+    text-decoration: none;
 }
 
 .manga-card:hover {

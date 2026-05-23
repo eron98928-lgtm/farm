@@ -19,15 +19,15 @@
             </div>
             <nav class="nav">
                 <a href="/" class="active">Início</a>
-                <a href="#">Populares</a>
-                <a href="#">Lançamentos</a>
-                <a href="#">Gêneros</a>
+                <a href="#destaques">Populares</a>
+                <a href="#lancamentos">Lançamentos</a>
+                <a href="#generos">Gêneros</a>
                 <a href="/premium" class="premium-link"><i class="fas fa-crown"></i> Premium</a>
             </nav>
             <div class="header-actions">
                 <div class="search-box">
-                    <input type="text" placeholder="Buscar mangá...">
-                    <button><i class="fas fa-search"></i></button>
+                    <input type="text" placeholder="Buscar mangá..." id="search-input">
+                    <button id="search-btn"><i class="fas fa-search"></i></button>
                 </div>
                 <div class="user-actions">
                     <a href="/login" class="btn-login">Entrar</a>
@@ -44,7 +44,7 @@
                 <h2>Leia.<br><em>Sinta.</em><br>Viva o Mangá.</h2>
                 <p>A plataforma definitiva para leitura de mangás. Milhares de títulos, qualidade HD, sem complicação.</p>
                 <div class="hero-buttons">
-                    <a href="#" class="btn-primary">Começar a Ler</a>
+                    <a href="#destaques" class="btn-primary">Começar a Ler</a>
                     <a href="/premium" class="btn-secondary">Seja Premium</a>
                 </div>
             </div>
@@ -52,12 +52,12 @@
     </section>
 
     <!-- Featured Manga -->
-    <section class="featured">
+    <section class="featured" id="destaques">
         <div class="container">
             <h2 class="section-title"><i class="fas fa-star"></i> Destaques da Semana</h2>
             <div class="manga-grid">
-                <!-- Manga Card 1 -->
-                <div class="manga-card featured-card">
+
+                <a href="/reader" class="manga-card featured-card">
                     <div class="manga-cover">
                         <img src="https://cdn.myanimelist.net/images/manga/2/253146l.jpg" alt="One Piece">
                         <span class="badge hot">Quente</span>
@@ -66,19 +66,15 @@
                         <h3>One Piece</h3>
                         <p class="genre">Ação, Aventura, Fantasia</p>
                         <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
                             <span>4.8</span>
                         </div>
                         <p class="chapter">Capítulo 1098</p>
                     </div>
-                </div>
+                </a>
 
-                <!-- Manga Card 2 -->
-                <div class="manga-card featured-card">
+                <a href="/reader" class="manga-card featured-card">
                     <div class="manga-cover">
                         <img src="https://cdn.myanimelist.net/images/manga/3/210341l.jpg" alt="Jujutsu Kaisen">
                         <span class="badge new">Novo</span>
@@ -87,19 +83,15 @@
                         <h3>Jujutsu Kaisen</h3>
                         <p class="genre">Ação, Sobrenatural</p>
                         <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i>
                             <span>4.9</span>
                         </div>
                         <p class="chapter">Capítulo 245</p>
                     </div>
-                </div>
+                </a>
 
-                <!-- Manga Card 3 -->
-                <div class="manga-card featured-card">
+                <a href="/reader" class="manga-card featured-card">
                     <div class="manga-cover">
                         <img src="https://cdn.myanimelist.net/images/manga/3/179023l.jpg" alt="Demon Slayer">
                     </div>
@@ -107,19 +99,15 @@
                         <h3>Demon Slayer</h3>
                         <p class="genre">Ação, Histórico</p>
                         <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="far fa-star"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i><i class="far fa-star"></i>
                             <span>4.5</span>
                         </div>
                         <p class="chapter">Capítulo 205 (Completo)</p>
                     </div>
-                </div>
+                </a>
 
-                <!-- Manga Card 4 -->
-                <div class="manga-card featured-card">
+                <a href="/reader" class="manga-card featured-card">
                     <div class="manga-cover">
                         <img src="https://cdn.myanimelist.net/images/manga/1/209370l.jpg" alt="My Hero Academia">
                         <span class="badge hot">Quente</span>
@@ -128,26 +116,24 @@
                         <h3>My Hero Academia</h3>
                         <p class="genre">Ação, Super Herói</p>
                         <div class="rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
                             <span>4.7</span>
                         </div>
                         <p class="chapter">Capítulo 410</p>
                     </div>
-                </div>
+                </a>
+
             </div>
         </div>
     </section>
 
     <!-- Latest Releases -->
-    <section class="latest">
+    <section class="latest" id="lancamentos">
         <div class="container">
             <h2 class="section-title"><i class="fas fa-clock"></i> Últimos Lançamentos</h2>
             <div class="manga-list">
-                <!-- List Item 1 -->
+
                 <div class="manga-list-item">
                     <img src="https://cdn.myanimelist.net/images/manga/2/253146l.jpg" alt="One Piece">
                     <div class="list-info">
@@ -158,7 +144,6 @@
                     <a href="/reader" class="btn-read">Ler</a>
                 </div>
 
-                <!-- List Item 2 -->
                 <div class="manga-list-item">
                     <img src="https://cdn.myanimelist.net/images/manga/3/210341l.jpg" alt="Jujutsu Kaisen">
                     <div class="list-info">
@@ -169,7 +154,6 @@
                     <a href="/reader" class="btn-read">Ler</a>
                 </div>
 
-                <!-- List Item 3 -->
                 <div class="manga-list-item">
                     <img src="https://cdn.myanimelist.net/images/manga/3/179023l.jpg" alt="Demon Slayer">
                     <div class="list-info">
@@ -180,7 +164,6 @@
                     <a href="/reader" class="btn-read">Ler</a>
                 </div>
 
-                <!-- List Item 4 -->
                 <div class="manga-list-item">
                     <img src="https://cdn.myanimelist.net/images/manga/1/209370l.jpg" alt="My Hero Academia">
                     <div class="list-info">
@@ -191,7 +174,6 @@
                     <a href="/reader" class="btn-read">Ler</a>
                 </div>
 
-                <!-- List Item 5 -->
                 <div class="manga-list-item">
                     <img src="https://cdn.myanimelist.net/images/manga/3/216464l.jpg" alt="Chainsaw Man">
                     <div class="list-info">
@@ -201,47 +183,48 @@
                     </div>
                     <a href="/reader" class="btn-read">Ler</a>
                 </div>
+
             </div>
             <div class="view-all">
-                <a href="#" class="btn-view-all">Ver Todos <i class="fas fa-arrow-right"></i></a>
+                <a href="#lancamentos" class="btn-view-all">Ver Todos <i class="fas fa-arrow-right"></i></a>
             </div>
         </div>
     </section>
 
     <!-- Genres -->
-    <section class="genres">
+    <section class="genres" id="generos">
         <div class="container">
             <h2 class="section-title"><i class="fas fa-th-large"></i> Gêneros</h2>
             <div class="genre-grid">
-                <a href="#" class="genre-card">
+                <a href="/reader" class="genre-card">
                     <i class="fas fa-fist-raised"></i>
                     <span>Ação</span>
                 </a>
-                <a href="#" class="genre-card">
+                <a href="/reader" class="genre-card">
                     <i class="fas fa-heart"></i>
                     <span>Romance</span>
                 </a>
-                <a href="#" class="genre-card">
+                <a href="/reader" class="genre-card">
                     <i class="fas fa-laugh"></i>
                     <span>Comédia</span>
                 </a>
-                <a href="#" class="genre-card">
+                <a href="/reader" class="genre-card">
                     <i class="fas fa-dragon"></i>
                     <span>Fantasia</span>
                 </a>
-                <a href="#" class="genre-card">
+                <a href="/reader" class="genre-card">
                     <i class="fas fa-robot"></i>
                     <span>Sci-Fi</span>
                 </a>
-                <a href="#" class="genre-card">
+                <a href="/reader" class="genre-card">
                     <i class="fas fa-user-ninja"></i>
                     <span>Aventura</span>
                 </a>
-                <a href="#" class="genre-card">
+                <a href="/reader" class="genre-card">
                     <i class="fas fa-ghost"></i>
                     <span>Sobrenatural</span>
                 </a>
-                <a href="#" class="genre-card">
+                <a href="/reader" class="genre-card">
                     <i class="fas fa-school"></i>
                     <span>Slice of Life</span>
                 </a>
@@ -298,17 +281,17 @@
                 <div class="footer-section">
                     <h4>Gêneros Populares</h4>
                     <ul>
-                        <li><a href="#">Ação</a></li>
-                        <li><a href="#">Romance</a></li>
-                        <li><a href="#">Fantasia</a></li>
-                        <li><a href="#">Comédia</a></li>
-                        <li><a href="#">Drama</a></li>
+                        <li><a href="#generos">Ação</a></li>
+                        <li><a href="#generos">Romance</a></li>
+                        <li><a href="#generos">Fantasia</a></li>
+                        <li><a href="#generos">Comédia</a></li>
+                        <li><a href="#generos">Drama</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
                     <h4>Newsletter</h4>
                     <p>Receba atualizações dos seus mangás favoritos</p>
-                    <form class="newsletter-form">
+                    <form class="newsletter-form" onsubmit="handleNewsletter(event)">
                         <input type="email" placeholder="Seu email">
                         <button type="submit">Inscrever</button>
                     </form>
@@ -321,5 +304,36 @@
     </footer>
 
     <script src="../scripts/script.js"></script>
+    <script>
+        // Busca
+        document.getElementById('search-btn').addEventListener('click', doSearch);
+        document.getElementById('search-input').addEventListener('keypress', e => {
+            if (e.key === 'Enter') doSearch();
+        });
+        function doSearch() {
+            const q = document.getElementById('search-input').value.trim();
+            if (q) window.location.href = '/reader?q=' + encodeURIComponent(q);
+        }
+
+        // Newsletter
+        function handleNewsletter(e) {
+            e.preventDefault();
+            const input = e.target.querySelector('input');
+            if (input.value) {
+                input.value = '';
+                input.placeholder = 'Inscrito! Obrigado ✓';
+                setTimeout(() => input.placeholder = 'Seu email', 3000);
+            }
+        }
+
+        // Scroll suave nas âncoras
+        document.querySelectorAll('a[href^="#"]').forEach(a => {
+            a.addEventListener('click', e => {
+                const id = a.getAttribute('href').slice(1);
+                const el = document.getElementById(id);
+                if (el) { e.preventDefault(); el.scrollIntoView({ behavior: 'smooth' }); }
+            });
+        });
+    </script>
 </body>
 </html>
