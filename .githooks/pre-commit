@@ -1,0 +1,58 @@
+#!/usr/bin/env python
+"""
+pre-commit hook — limpa metadados EXIF de imagens staged antes de cada commit.
+Instalação: git config core.hooksPath .githooks
+"""
+import subprocess
+import sys
+from pathlib import Path
+
+SUPPORTED = {".jpg", ".jpeg", ".png", ".webp", ".bmp"}
+
+result = subprocess.run(
+    ["git", "diff", "--cached", "--name-only", "--diff-filter=ACM"],
+    capture_output=True, text=True
+)
+staged = [Path(p) for p in result.stdout.splitlines() if Path(p).suffix.lower() in SUPPORTED]
+
+if not staged:
+    sys.exit(0)
+
+print(f"[pre-commit] Limpando metadados de {len(staged)} imagem(ns) staged...")
+
+try:
+    from PIL import Image
+    import shutil
+except ImportError:
+    print("[pre-commit] AVISO: pillow não instalado, pulando limpeza de metadados.")
+    sys.exit(0)
+
+repo_root = Path(subprocess.run(
+    ["git", "rev-parse", "--show-toplevel"], capture_output=True, text=True
+).stdout.strip())
+
+cleaned = 0
+for rel in staged:
+    path = repo_root / rel
+    if not path.exists():
+        continue
+    try:
+        with Image.open(path) as img:
+            mode = img.mode
+            if path.suffix.lower() in {".jpg", ".jpeg"} and mode in ("RGBA", "P", "LA"):
+                img = img.convert("RGB"); mode = "RGB"
+            out = Image.new(mode, img.size)
+            out.putdata(list(img.getdata()))
+            fmt = "JPEG" if path.suffix.lower() in {".jpg", ".jpeg"} else "PNG"
+            kw = {"quality": 95, "optimize": True} if fmt == "JPEG" else {"optimize": True}
+            tmp = path.with_suffix(".tmp" + path.suffix)
+            out.save(str(tmp), format=fmt, **kw)
+            shutil.move(str(tmp), str(path))
+        subprocess.run(["git", "add", str(rel)], check=True)
+        print(f"  OK  {rel}")
+        cleaned += 1
+    except Exception as e:
+        print(f"  ERRO {rel}: {e}")
+
+print(f"[pre-commit] {cleaned}/{len(staged)} imagem(ns) limpas.")
+sys.exit(0)

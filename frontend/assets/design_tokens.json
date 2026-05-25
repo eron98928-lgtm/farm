@@ -1,0 +1,95 @@
+{
+  "_project": "MangaReader farm",
+  "_version": "1.0.0",
+  "_palette": "Dark Purple — Cyberpunk Manga",
+
+  "colors": {
+    "purple":         "#7c5cbf",
+    "purple_light":   "#9b7fd4",
+    "purple_glow":    "rgba(124, 92, 191, 0.55)",
+    "purple_glow_sm": "rgba(124, 92, 191, 0.30)",
+    "pink":           "#f093fb",
+    "gold":           "#f5c518",
+    "hot":            "#ff5f6d",
+    "new":            "#00d2a0",
+
+    "bg_deepest":     "#0d0d14",
+    "bg_deep":        "#111118",
+    "bg_surface":     "#18181f",
+    "bg_card":        "#1e1e28",
+    "bg_card_hover":  "#252530",
+    "border":         "rgba(255,255,255,0.07)",
+
+    "text_1":         "#f2f2f5",
+    "text_2":         "#a0a0b8",
+    "text_3":         "#6b6b85"
+  },
+
+  "typography": {
+    "font_ui":    "'Segoe UI', system-ui, sans-serif",
+    "scale_ratio": 1.25,
+    "base_px":    16,
+    "scale": {
+      "2xs": "0.64rem",
+      "xs":  "0.8rem",
+      "sm":  "1rem",
+      "md":  "1.25rem",
+      "lg":  "1.563rem",
+      "xl":  "1.953rem",
+      "2xl": "2.441rem",
+      "3xl": "3.052rem"
+    }
+  },
+
+  "radii": {
+    "sm": "8px",
+    "md": "12px",
+    "lg": "18px"
+  },
+
+  "shadows": {
+    "card":  "0 4px 24px rgba(0,0,0,0.5)",
+    "hover": "0 8px 40px rgba(0,0,0,0.7), 0 0 0 1px rgba(124,92,191,0.4)",
+    "glow":  "0 0 24px rgba(124,92,191,0.55), 0 8px 40px rgba(0,0,0,0.6)"
+  },
+
+  "components": {
+    "manga_card": {
+      "tilt_max_deg":      8,
+      "screentone_opacity": 0.04,
+      "badge_hot":         "#ff5f6d",
+      "badge_new":         "#00d2a0",
+      "badge_premium":     "#f5c518",
+      "progress_color":    "#7c5cbf",
+      "hover_lift_px":     -6
+    },
+    "manga_list_item": {
+      "accent_line_color": "#7c5cbf",
+      "hover_translate_px": 4
+    },
+    "reader_shell": {
+      "ambilight_opacity":  0.35,
+      "progress_gradient":  "linear-gradient(90deg, #7c5cbf, #f093fb)",
+      "page_max_width_px":  900,
+      "page_gutter_px":     24
+    },
+    "premium_banner": {
+      "gradient": "linear-gradient(135deg, #7c5cbf 0%, #f093fb 100%)",
+      "border_opacity": 0.3
+    },
+    "navbar": {
+      "backdrop_blur_px":   20,
+      "scroll_shrink_ratio": 0.85,
+      "height_default_px":  72,
+      "height_scrolled_px": 56
+    }
+  },
+
+  "stitch_roadmap": {
+    "s1": "design_tokens.json — DONE",
+    "s2": "manga-card — extrai tilt, screentone, badge para tokens",
+    "s3": "manga-list-item — accent line e hover offset via tokens",
+    "s4": "reader-shell — ambilight, progress, page gutter via tokens",
+    "s5": "navbar — backdrop blur, scroll shrink, View Transition names via tokens"
+  }
+}

@@ -1,7 +1,8 @@
 import { z } from "zod";
-import { eq, desc, and, gte } from "drizzle-orm";
+import { eq, desc, and } from "drizzle-orm";
 import { router, adminProcedure } from "../_core/trpc.js";
 import { mangas, chapters, users, securityEvents, userRiskScores, emailLogs, adminActions, auditLogs } from "../db/schema.js";
+import { validateSupabaseStorageUrl } from "../_core/imageMetadataCleaner.js";
 
 export const adminRouter = router({
   getMangaList: adminProcedure
@@ -85,6 +86,11 @@ export const adminRouter = router({
       isPremium: z.boolean().default(false),
     }))
     .mutation(async ({ ctx, input }) => {
+      const invalidUrls = input.pages.filter(url => !validateSupabaseStorageUrl(url));
+      if (invalidUrls.length > 0) {
+        throw new Error(`URLs inválidas — apenas Supabase Storage aceito: ${invalidUrls.join(", ")}`);
+      }
+
       const result = await ctx.db.insert(chapters).values({
         mangaId: input.mangaId,
         chapterNumber: input.chapterNumber,

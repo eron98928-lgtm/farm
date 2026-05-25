@@ -1,0 +1,63 @@
+version: "3.8"
+
+# BTCPay Server — stack local de desenvolvimento
+# Usa NBXplorer apontando para Testnet (sem baixar blockchain completa)
+# Para trocar para Mainnet: NBITCOIN_NETWORK=mainnet em nbxplorer e btcpayserver
+
+services:
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: btcpay
+      POSTGRES_USER: btcpay
+      POSTGRES_PASSWORD: ${BTCPAY_POSTGRES_PASSWORD:-btcpay_dev_pass}
+    volumes:
+      - btcpay_postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U btcpay"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  nbxplorer:
+    image: nicolasdorier/nbxplorer:2.5.4
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NBXPLORER_NETWORK: testnet
+      NBXPLORER_BIND: 0.0.0.0:32838
+      NBXPLORER_NOAUTH: 1
+      NBXPLORER_CHAINS: btc
+      NBXPLORER_POSTGRES: Host=postgres;Port=5432;Database=nbxplorer;Username=btcpay;Password=${BTCPAY_POSTGRES_PASSWORD:-btcpay_dev_pass}
+    volumes:
+      - nbxplorer_data:/datadir
+    ports:
+      - "32838:32838"
+
+  btcpayserver:
+    image: btcpayserver/btcpayserver:1.13.5
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      BTCPAY_POSTGRES: Host=postgres;Port=5432;Database=btcpay;Username=btcpay;Password=${BTCPAY_POSTGRES_PASSWORD:-btcpay_dev_pass}
+      BTCPAY_NETWORK: testnet
+      BTCPAY_BIND: 0.0.0.0:49392
+      BTCPAY_ROOTPATH: /
+      BTCPAY_NBXPLORER: http://nbxplorer:32838
+      BTCPAY_DEBUGLOG: btcpay.log
+    volumes:
+      - btcpay_data:/datadir
+      - btcpay_data:/datadir/.nbxplorer
+    ports:
+      - "49392:49392"
+
+volumes:
+  btcpay_postgres:
+  nbxplorer_data:
+  btcpay_data:

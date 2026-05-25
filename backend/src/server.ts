@@ -8,6 +8,7 @@ import { apiRateLimitMiddleware } from "./_core/rateLimiting.js";
 import { initSentry, captureException } from "./_core/sentry.js";
 import { createContext } from "./_core/trpc.js";
 import { appRouter } from "./routers/index.js";
+import { paymentsRouter } from "./routers/payments.js";
 
 export const app = express();
 const PORT = process.env.PORT ?? 3001;
@@ -15,17 +16,33 @@ const PORT = process.env.PORT ?? 3001;
 initSentry(app);
 
 app.use(cors({
-  origin: process.env.FRONTEND_URL ?? "*",
+  origin: process.env.FRONTEND_URL
+    ? process.env.FRONTEND_URL.split(",").map(o => o.trim())
+    : ["http://localhost:3000"],
   credentials: true,
 }));
 
-app.use(morgan("combined"));
-app.use(express.json({ limit: "10mb" }));
+app.use(morgan((tokens, req, res) =>
+  [
+    tokens.method(req, res),
+    tokens.url(req, res),
+    tokens.status(req, res),
+    tokens.res(req, res, "content-length"),
+    tokens["response-time"](req, res), "ms",
+  ].join(" ")
+));
+// Captura rawBody via verify — express.json continua parseando normalmente
+app.use(express.json({
+  limit: "10mb",
+  verify: (req: express.Request & { rawBody?: Buffer }, _res, buf) => {
+    req.rawBody = buf;
+  },
+}));
+app.use("/api/payments", paymentsRouter);
 app.use(securityHeadersMiddleware);
 
-if (process.env.UPSTASH_REDIS_URL) {
-  app.use("/api/trpc", apiRateLimitMiddleware);
-}
+// Rate limiting sempre ativo — Redis quando disponível, memória como fallback
+app.use("/api/trpc", apiRateLimitMiddleware);
 
 app.use(
   "/api/trpc",

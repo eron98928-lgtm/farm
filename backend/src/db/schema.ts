@@ -1,6 +1,6 @@
 import {
   pgTable, varchar, text, timestamp, integer, pgEnum,
-  json, boolean, index, serial, uniqueIndex
+  json, boolean, index, serial, uniqueIndex, uuid, bigint
 } from "drizzle-orm/pg-core";
 
 // ─── Enums ────────────────────────────────────────────────────────────────────
@@ -173,4 +173,39 @@ export const userFavorites = pgTable("user_favorites", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (t) => ({
   idxUnique: uniqueIndex("idx_fav_unique").on(t.userId, t.mangaId),
+}));
+
+// ─── Pagamentos ───────────────────────────────────────────────────────────────
+
+export const invoiceStatusEnum = pgEnum("invoice_status", ["pending", "confirmed", "settled", "expired", "invalid"]);
+
+export const invoices = pgTable("invoices", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  mangaId: integer("manga_id").references(() => mangas.id, { onDelete: "set null" }),
+  chapterId: integer("chapter_id").references(() => chapters.id, { onDelete: "set null" }),
+  btcpayInvoiceId: varchar("btcpay_invoice_id", { length: 255 }).notNull().unique(),
+  btcAddress: varchar("btc_address", { length: 255 }),
+  amountSats: bigint("amount_sats", { mode: "number" }).notNull(),
+  status: invoiceStatusEnum("status").default("pending").notNull(),
+  webhookSecret: varchar("webhook_secret", { length: 255 }).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at").notNull(),
+  settledAt: timestamp("settled_at"),
+}, (t) => ({
+  idxUser:   index("idx_invoices_user").on(t.userId),
+  idxBtcpay: index("idx_invoices_btcpay").on(t.btcpayInvoiceId),
+  idxStatus: index("idx_invoices_status").on(t.status, t.expiresAt),
+}));
+
+export const userPurchases = pgTable("user_purchases", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id").notNull().references(() => users.id, { onDelete: "cascade" }),
+  mangaId: integer("manga_id").references(() => mangas.id, { onDelete: "cascade" }),
+  chapterId: integer("chapter_id").references(() => chapters.id, { onDelete: "cascade" }),
+  invoiceId: uuid("invoice_id").notNull().references(() => invoices.id),
+  grantedAt: timestamp("granted_at").defaultNow().notNull(),
+}, (t) => ({
+  idxUser:   index("idx_purchases_user").on(t.userId),
+  idxUnique: uniqueIndex("uq_purchase_user_chapter").on(t.userId, t.chapterId),
 }));
