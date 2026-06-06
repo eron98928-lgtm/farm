@@ -1,0 +1,110 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database - isolated network, not exposed publicly
+  postgres:
+    image: postgres:16-alpine
+    container_name: mangareader-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${DB_USER:-mangareader}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-change_this_in_production}
+      POSTGRES_DB: ${DB_NAME:-mangareader}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal_network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-mangareader}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis for rate limiting & sessions (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: mangareader-redis
+    restart: unless-stopped
+    networks:
+      - internal_network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Backend API (Node.js + Express + tRPC)
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    container_name: mangareader-api
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${DB_USER:-mangareader}:${DB_PASSWORD:-change_this_in_production}@postgres:5432/${DB_NAME:-mangareader}
+      REDIS_URL: redis://redis:6379
+      JWT_SECRET: ${JWT_SECRET:-generate_a_secure_random_string_here}
+      SESSION_SECRET: ${SESSION_SECRET:-generate_another_secure_string}
+      CSPRNG_SALT_LENGTH: 32
+      # BTCPay Server config
+      BTCPAY_URL: ${BTCPAY_URL:-http://btcpay:437}
+      BTCPAY_API_KEY: ${BTCPAY_API_KEY:-}
+      XMR_WALLET_ADDRESS: ${XMR_WALLET_ADDRESS:-}
+      # FonteData API (CPF verification)
+      FONTE_DATA_API_KEY: ${FONTE_DATA_API_KEY:-}
+      # Email (Resend)
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      FROM_EMAIL: ${FROM_EMAIL:-noreply@mangareader.com}
+    ports:
+      - "3000:3000"
+    networks:
+      - internal_network
+      - web_network
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  # BTCPay Server (Monero payments)
+  btcpay:
+    image: btcpayserver/btcpayserver:latest
+    container_name: mangareader-btcpay
+    restart: unless-stopped
+    environment:
+      BTCPAY_NETWORK: ${BTCPAY_NETWORK:-regtest}
+      BTCPAY_ROOTPATH: /
+      BTCPAY_POSTGRES: User ID=btcpay;Password=btcpay;Host=btcpay-db;Port=5432;Application Name=btcpayserver;
+      BTCPAY_EXTERNALURL: ${BTCPAY_EXTERNAL_URL:-http://localhost:437}
+      BTCPAY_ROOTAPIKEY: ${BTCPAY_API_KEY:-}
+    ports:
+      - "437:80"
+    networks:
+      - internal_network
+    depends_on:
+      - btcpay-db
+
+  btcpay-db:
+    image: postgres:16-alpine
+    container_name: mangareader-btcpay-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: btcpay
+      POSTGRES_PASSWORD: btcpay
+      POSTGRES_DB: btcpay
+    volumes:
+      - btcpay_data:/var/lib/postgresql/data
+    networks:
+      - internal_network
+
+networks:
+  internal_network:
+    driver: bridge
+    internal: true
+  web_network:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  btcpay_data:

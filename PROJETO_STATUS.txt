@@ -1,0 +1,732 @@
+================================================================================
+  MANGAREADER — STATUS COMPLETO DO PROJETO
+  Atualizado em: 01/06/2026
+================================================================================
+
+
+────────────────────────────────────────────────────────────────────────────────
+  VISÃO GERAL
+────────────────────────────────────────────────────────────────────────────────
+
+Plataforma de leitura de conteúdo oriental (Manga, Manhwa, Manhua, Novel e BR)
+com modelo freemium. Diferencial: privacidade total — pagamentos exclusivamente
+em Monero (XMR) via BTCPay Server, sem rastreamento de usuário, deploy planejado
+em VPS offshore.
+
+MODELO DE NEGÓCIO:
+  - Usuário free: lê capítulos com 72h de atraso (early access) + vê anúncios
+  - Assinante: acesso imediato + sem anúncios
+  - Planos: Mensal R$10/30d | Trimestral R$25/90d | Anual R$80/365d
+  - Dias de assinatura são CUMULATIVOS (somados ao saldo, não substituídos)
+  - Doações também aceitas via Monero
+
+CONFORMIDADE LEGAL:
+  - Verificação de CPF prevista (Lei ECA Digital 15.211/2025) — DESATIVADA TEMPORARIAMENTE
+  - Quando reativada: CPF nunca será armazenado — apenas SHA-256(CPF + salt CSPRNG)
+
+
+────────────────────────────────────────────────────────────────────────────────
+  STACK TÉCNICA
+────────────────────────────────────────────────────────────────────────────────
+
+FRONTEND
+  Linguagem:    TypeScript
+  Framework:    React 19
+  Build:        Vite 6 + vite-plugin-singlefile (HTML único em produção)
+  Estilo:       Tailwind CSS v4
+  Roteamento:   React Router v7
+  Estado:       useState local + props (sem Redux/Zustand)
+  API client:   fetch nativo com wrapper próprio em src/lib/api.ts
+
+BACKEND
+  Runtime:      Node.js 24
+  Servidor:     Express 4
+  API:          tRPC v10 (contratos tipados, sem REST clássico)
+  ORM:          Drizzle ORM v0.29
+  Banco:        PostgreSQL 17
+  Hashing:      Argon2 (senhas) + SHA-256 com salt CSPRNG (CPF — desativado)
+  Autenticação: Sessões por token (32 bytes CSPRNG, 30 dias, salvas no banco)
+  Segurança:    Helmet (headers HTTP) + rate limiting 100 req/min por IP
+
+BANCO DE DADOS (LOCAL)
+  Host:         localhost:5432
+  Banco:        mangareader
+  Usuário app:  mangareader / manga2024
+  Superuser:    postgres / manga2024
+  Serviço:      postgresql-x64-17 (Windows Service)
+
+
+────────────────────────────────────────────────────────────────────────────────
+  COMO RODAR
+────────────────────────────────────────────────────────────────────────────────
+
+PRÉ-REQUISITO: PostgreSQL (serviço postgresql-x64-17 deve estar rodando)
+
+FRONTEND — terminal 1:
+  cd "Nova pasta (2)"
+  npm run dev
+  → http://localhost:5173
+
+BACKEND — terminal 2:
+  cd "Nova pasta (2)\backend"
+  npm run dev
+  → API:    http://localhost:3000/trpc
+  → Health: http://localhost:3000/health  ← retorna {"status":"healthy"}
+
+OUTROS COMANDOS DO BACKEND:
+  npm run db:push    → aplica mudanças do schema no banco (sem migrations)
+  npm run db:studio  → abre interface web do Drizzle para explorar o banco
+  npm run build      → compila TypeScript para dist/
+
+
+────────────────────────────────────────────────────────────────────────────────
+  MAPA COMPLETO DE ARQUIVOS
+────────────────────────────────────────────────────────────────────────────────
+
+FRONTEND — src/
+
+  lib/
+    api.ts              ★ Cliente HTTP para o backend tRPC.
+                          Funções: trpcGet(), trpcPost(), saveSession(),
+                          clearSession(), hasSession(), mapApiManga()
+                          Cobre: api.auth.*, api.payments.*, api.mangas.*
+
+  data/
+    mangas.ts           18 títulos mock com capítulos gerados dinamicamente.
+                          Tipos: Manga, Chapter, ContentType, Status
+                          Constante: EARLY_ACCESS_HOURS = 72
+                          Usado como FALLBACK quando API não retorna dados
+    plans.ts            Definição dos 3 planos + taxa XMR_BRL_RATE = 920
+                          Tipo: Plan | xmrFromBrl()
+
+  utils/
+    access.ts           Lógica de early access:
+                          msUntilFree(ch) → ms até liberar para free
+                          isEarlyAccess(ch) → bool
+                          isLocked(ch, isPremium) → bool
+                          formatCountdown(ms) → "02h 14m" / "1d 03h"
+    cn.ts               Utilitário para juntar classNames
+    typeBadge.ts        Retorna cor e bandeira por tipo (Manga🇯🇵, Manhwa🇰🇷 etc)
+
+  components/
+    Login.tsx           Tela de login/cadastro. Conectada à API real.
+                          Salva sessionId no localStorage após auth.
+    AgeGate.tsx         Verificação de CPF (ECA Digital). DESATIVADA TEMPORARIAMENTE.
+                          Código comentado — reativar removendo os comentários
+                          em: AgeGate.tsx, App.tsx, Login.tsx, api.ts,
+                          backend/routers/auth.ts, backend/drizzle/schema.ts
+    Header.tsx          Barra superior com nav, badge premium, botão Sair.
+    Footer.tsx          Rodapé estático com links.
+    Hero.tsx            Carrossel de destaques na home. Busca mangas.getFeatured.
+                          Fallback para top-4 mock por rating.
+    Catalog.tsx         Grade de mangás com filtros sidebar. Busca mangas.list.
+                          Filtros: tipo, status, gênero, busca, ordenação.
+                          Fallback para MANGAS mock.
+    ContentRow.tsx      Linha horizontal scrollável de cards (home page).
+                          Usado em: Continuar lendo, Últimos, Em alta, Top rated.
+    Reader.tsx          Leitor de capítulos em tela cheia.
+                          Layout: sidebar capítulos | páginas | ads (skyscraper)
+                          Mobile: ads banner no topo e rodapé.
+                          Exibe placeholder (gradiente) no lugar de imagens reais.
+    InvoiceModal.tsx    Modal de pagamento Monero.
+                          Cria fatura real via API ao abrir.
+                          Polling automático a cada 5s para confirmar pagamento.
+                          Fallback para simulação quando backend indisponível.
+    AdSlot.tsx          Placeholder de anúncio (border dashed). Nunca mostrado
+                          para assinantes.
+    Countdown.tsx       Timer regressivo em tempo real. Usado no early access.
+    Plans.tsx           Cards dos 3 planos com preço BRL e XMR.
+    Donate.tsx          Formulário de doação com valor customizável.
+    Toast.tsx           Notificação temporária (fade out automático).
+    Tooltip.tsx         Tooltip simples por hover.
+
+  pages/
+    HomePage.tsx        Home: Hero + 4 ContentRows (continuar/últimos/alta/top)
+    CatalogPage.tsx     Wrapper da página de catálogo → usa <Catalog>
+    LatestPage.tsx      Grid de lançamentos recentes. Busca mangas.getLatest.
+                          Fallback para MANGAS mock.
+    PlansPage.tsx       Página de planos → usa <Plans>
+    DonatePage.tsx      Página de doação → usa <Donate>
+
+    admin/
+      AdminLogin.tsx    Login do painel admin (senha hardcoded no context.ts)
+      AdminDashboard.tsx Lista de mangás com busca. Opera sobre dados MOCK —
+                          NÃO conectado à API ainda.
+      AdminMangaForm.tsx Formulário criar/editar mangá (título, autor, tipo,
+                          status, gêneros, capa gradiente, sinopse, 18+).
+                          Opera sobre dados mock locais — NÃO salva no banco.
+      AdminChapters.tsx  Lista e edita capítulos de um mangá.
+                          Opera sobre dados mock locais — NÃO salva no banco.
+
+  App.tsx               Orquestrador principal.
+                          Fluxo atual: Login → App (AgeGate desativada)
+                          Fluxo original (quando CPF ativo): Login → AgeGate → App
+                          SessionId no localStorage → pula login direto.
+                          Carrega assinatura via getSubscription no mount.
+                          Gerencia: isPremium, daysLeft, reading, invoice, toast.
+
+  main.tsx              Entry point React.
+  index.css             Reset CSS + animações customizadas (float-slow, fade-up,
+                          pulse-ring, spin).
+
+
+BACKEND — backend/src/
+
+  index.ts              Entry point Express. Ordem de imports crítica:
+                          "dotenv/config" DEVE ser o primeiro import.
+                          Middlewares: Helmet, CORS, rate limiter, JSON parser.
+                          Endpoint: POST/GET /trpc/* → createExpressMiddleware
+                          Endpoint: GET /health → db.execute(sql`SELECT 1`)
+
+  db.ts                 Inicializa pool pg + Drizzle ORM.
+                          Lê DATABASE_URL do .env (após dotenv carregar).
+
+  server/
+    index.ts            Monta AppRouter com os 4 sub-routers.
+                          Exporta tipo AppRouter (usado pelo cliente).
+    trpc.ts             Configuração tRPC: publicProcedure, authedProcedure,
+                          adminProcedure. Rate limiter em memória (Map).
+    context.ts          Cria contexto por request: valida sessionId no banco,
+                          resolve usuário. Admin = email hardcoded.
+
+    routers/
+      auth.ts           register, login, logout, me
+                          (verifyCpf e checkVerification — DESATIVADOS, código comentado)
+      mangas.ts         list, getBySlug, getFeatured, getPopular, getLatest,
+                          create*, update*, delete*   (* = adminProcedure)
+      chapters.ts       getByManga, getChapter, checkAccess, create*, update*,
+                          delete*, uploadPages*        (* = adminProcedure)
+      payments.ts       getXmrRate, getPlanPrices, createInvoice,
+                          createDonationInvoice, checkInvoice, getSubscription
+
+  drizzle/
+    schema.ts           13 tabelas. Ver seção "Banco de Dados" abaixo.
+
+  .env                  Variáveis de ambiente (NÃO commitar no git).
+
+
+RAIZ DO PROJETO:
+  vite.config.ts        viteSingleFile() só no build, não no dev.
+  docker-compose.yml    PostgreSQL 16 + Redis 7 + API + BTCPay para produção.
+  BACKEND_COMPLETO.md   Documentação original do backend.
+  PROJETO_STATUS.txt    Este arquivo.
+
+
+────────────────────────────────────────────────────────────────────────────────
+  BANCO DE DADOS — 13 TABELAS
+────────────────────────────────────────────────────────────────────────────────
+
+TABELA             DESCRIÇÃO / CAMPOS PRINCIPAIS
+─────────────────────────────────────────────────────────────────────────────
+users              id (uuid PK), email (unique), password_hash, created_at,
+                   last_login_at, is_banned, ban_reason
+
+sessions           id (text PK = token 32 bytes), user_id (FK→users),
+                   expires_at, created_at
+
+cpf_verifications  user_id (PK FK→users), cpf_hash (SHA-256), csprng_salt,
+                   verified_at, source ('fonte_data')
+
+mangas             id (uuid), title, slug (unique), type (enum), author,
+                   scanlation, status (enum), genres (jsonb array),
+                   rating (decimal 2,1), views (int), cover_gradient,
+                   accent_color, synopsis, mature (bool), created_at, updated_at
+
+chapters           id (uuid), manga_id (FK→mangas), number, title, pages,
+                   released_at, is_premium_only (bool), created_at, updated_at
+
+chapter_pages      id (uuid), chapter_id (FK→chapters), page_number,
+                   image_url, image_key (S3/R2), width, height,
+                   processed_at (timestamp sharp), created_at
+
+user_history       id (uuid), user_id (FK→users), manga_id (FK→mangas),
+                   chapter_id (FK→chapters, nullable), current_page,
+                   last_read_at
+
+user_favorites     id (uuid), user_id (FK→users), manga_id (FK→mangas),
+                   created_at  [unique(user_id, manga_id)]
+
+user_subscriptions id (uuid), user_id (FK→users), plan_type (enum),
+                   start_date, end_date, is_active (bool),
+                   auto_renew=false (sempre), created_at, updated_at
+
+invoices           id (uuid), user_id (FK→users), btcpay_invoice_id (unique),
+                   amount_brl (decimal), amount_xmr (decimal),
+                   xmr_address (subendereço rotacionado), status (enum),
+                   plan_type (enum, inclui 'donation'), paid_at,
+                   expires_at, metadata (jsonb)
+
+user_risk_scores   user_id (PK), score (0-100), reasons (jsonb array),
+                   last_calculated_at, is_blocked
+
+security_events    id (uuid), user_id, event_type, ip_address (hashed),
+                   user_agent, metadata (jsonb), created_at
+
+audit_logs         id (uuid), actor_user_id, action, resource, resource_id,
+                   changes (jsonb before/after), ip_address, created_at
+
+email_logs         id (uuid), user_id, to, subject, template,
+                   status (enum), error, sent_at
+
+user_notification_preferences
+                   user_id (PK), email_new_chapters, email_promotions,
+                   push_new_chapters, updated_at
+
+ÍNDICES RELEVANTES:
+  mangas: slug, type, status
+  chapters: manga_id, number, released_at
+  chapter_pages: chapter_id, page_number
+  invoices: btcpay_invoice_id, status, user_id
+  user_history: user_id, manga_id, last_read_at
+
+
+────────────────────────────────────────────────────────────────────────────────
+  TIPOS DE DADOS — FRONTEND
+────────────────────────────────────────────────────────────────────────────────
+
+TIPO Manga (src/data/mangas.ts)
+  id: string
+  title: string
+  type: "Manga" | "Manhwa" | "Manhua" | "Novel" | "BR"
+  author: string
+  scanlation: string
+  status: "Ativo" | "Hiato" | "Completo"
+  genres: string[]           (ver ALL_GENRES abaixo)
+  rating: number             (0.0 a 5.0)
+  views: number
+  cover: string              (classes Tailwind: "from-X via-Y to-Z")
+  accent: string             (classe Tailwind: "text-X-300")
+  synopsis: string
+  mature: boolean
+  chapters: Chapter[]
+
+TIPO Chapter
+  id: string
+  number: number
+  title: string
+  pages: number
+  releasedAt: string         (ISO 8601)
+
+TIPO Plan (src/data/plans.ts)
+  id: "monthly" | "quarterly" | "annual"
+  name: string
+  duration: string           (ex: "30 dias")
+  days: number
+  brl: number
+  highlight?: boolean
+  perks: string[]
+
+TIPO Invoice (App.tsx interno)
+  title: string
+  brl: number
+  xmr: string                (valor estimado, substituído pelo real da API)
+  durationDays?: number
+  planId?: "monthly" | "quarterly" | "annual"
+  kind: "subscription" | "donation"
+
+GÊNEROS DISPONÍVEIS (ALL_GENRES):
+  Ação, Aventura, Comédia, Drama, Fantasia, Isekai, Romance,
+  Seinen, Shonen, Slice of Life, Sobrenatural
+
+TIPOS DE CONTEÚDO (ALL_TYPES):
+  Manga (🇯🇵), Manhwa (🇰🇷), Manhua (🇨🇳), Novel, BR (🇧🇷)
+
+TAXA XMR/BRL:
+  XMR_BRL_RATE = 920 (hardcoded em src/data/plans.ts e backend/payments.ts)
+
+
+────────────────────────────────────────────────────────────────────────────────
+  ESTADO ATUAL — O QUE FUNCIONA
+────────────────────────────────────────────────────────────────────────────────
+
+✅ TOTALMENTE FUNCIONAL
+
+  Frontend
+  - Tela de login e cadastro com API real (Argon2 no backend)
+  - Sessão persistente entre refreshes (localStorage + banco)
+  - Catálogo com filtros por tipo/status/gênero/busca/ordenação
+  - Leitor de mangás com sidebar de capítulos e navegação
+  - Early access 72h: timer regressivo, badge, tela de bloqueio
+  - Ads no leitor: skyscraper (esquerda + direita) no desktop,
+    banner (topo + rodapé) no mobile — removidos para assinantes
+  - Modal de pagamento com endereço XMR do banco + countdown 15min
+  - Polling automático de status de pagamento a cada 5s
+  - Fallback para simulação quando backend indisponível
+  - Página de planos com preços em BRL e XMR
+  - Página de doação com valor customizável
+  - Botão de logout (limpa sessão local e invalida no banco)
+  - Painel admin acessível em /admin
+
+  Backend / Banco
+  - API health check respondendo em /health
+  - 12 tabelas ativas (cpf_verifications desativada no schema)
+  - auth.register, auth.login, auth.logout, auth.me
+  - payments.createInvoice, payments.createDonationInvoice
+  - payments.checkInvoice, payments.getSubscription
+  - mangas.list, mangas.getFeatured, mangas.getPopular, mangas.getLatest
+  - Rate limiting 100 req/min por IP
+  - Headers de segurança via Helmet
+
+⚠️  PARCIALMENTE FUNCIONAL
+
+  Painel Admin
+  - Interface visual completa (listar/criar/editar/excluir mangás e capítulos)
+  - NÃO conectado à API: opera sobre dados mock em memória
+  - Alterações se perdem ao recarregar a página
+  - NÃO persiste no banco de dados
+
+  Banco de dados de mangás
+  - Tabelas mangas, chapters, chapter_pages existem e estão corretas
+  - Banco está VAZIO de conteúdo (nenhum mangá cadastrado)
+  - O app usa os 18 títulos mock como fallback automaticamente
+
+  Modal de pagamento
+  - Cria fatura real no banco (tabela invoices)
+  - Endereço XMR gerado localmente (não via carteira real)
+  - Polling funciona, mas status nunca muda para "paid" sem BTCPay
+  - Simulação manual ainda disponível como fallback
+
+  Assinatura
+  - Tabela user_subscriptions existe e está correta
+  - Após confirmação de pagamento, assinatura NÃO é ativada no banco
+  - O webhook do BTCPay que ativaria a assinatura não está implementado
+  - isPremium é gerenciado localmente no estado React
+
+❌ NÃO FUNCIONA AINDA
+
+  - Imagens reais nas páginas dos capítulos (só gradientes decorativos)
+  - Histórico de leitura persistido no banco
+  - Favoritos
+  - Pagamento Monero real (BTCPay não configurado)
+  - Verificação de CPF/maioridade (código comentado — reativar quando contratar FonteData)
+  - Emails (boas-vindas, confirmação de pagamento, novo capítulo)
+
+
+────────────────────────────────────────────────────────────────────────────────
+  O QUE FALTA — DETALHADO POR PRIORIDADE
+────────────────────────────────────────────────────────────────────────────────
+
+══════════════════════════════════════════════════════════
+  PRIORIDADE ALTA — necessário para funcionar em produção
+══════════════════════════════════════════════════════════
+
+  1. CONECTAR PAINEL ADMIN À API
+  ─────────────────────────────
+  SITUAÇÃO: Admin funciona visualmente mas opera em memória (mock).
+  O QUE FAZER:
+    - AdminDashboard.tsx: substituir useState<Manga[]>(MANGAS) por chamada
+      api.mangas.list() + estado local sincronizado com API
+    - Botão criar → chamar api.mangas.create() com os campos do formulário
+    - Botão editar → chamar api.mangas.update()
+    - Botão excluir → chamar api.mangas.delete()
+    - AdminChapters.tsx: botão adicionar → api.chapters.create()
+      Editar → api.chapters.update() | Excluir → api.chapters.delete()
+  DADOS NECESSÁRIOS PARA CRIAR MANGÁ (backend/routers/mangas.ts):
+    title (string), slug (string, único), type (enum), author (string),
+    scanlation (string?), status (enum), genres (string[]),
+    rating (0-5), views (int), coverGradient (string?),
+    accentColor (string?), synopsis (string), mature (bool)
+  OBSERVAÇÃO: O campo "slug" precisa ser adicionado ao AdminMangaForm.tsx
+    (atualmente não existe no formulário).
+
+  2. SEED DO BANCO COM MANGÁS
+  ──────────────────────────
+  SITUAÇÃO: Banco vazio — API retorna [] para todos os endpoints de mangá.
+  O QUE FAZER:
+    Criar backend/src/seed.ts que lê src/data/mangas.ts e insere no banco.
+    Ou usar o painel admin após conectá-lo à API (item 1 acima).
+  ESTRUTURA NECESSÁRIA:
+    Para cada Manga mock → INSERT em mangas (com slug = manga.id)
+    Para cada Chapter → INSERT em chapters (manga_id, number, title, pages,
+      released_at, is_premium_only=false)
+    chapter_pages ficam vazias até ter imagens reais.
+
+  3. IMAGENS REAIS DAS PÁGINAS
+  ────────────────────────────
+  SITUAÇÃO: Reader.tsx exibe PageCanvas (gradiente decorativo) no lugar de imgs.
+  O QUE FAZER:
+    a) Escolher storage:
+       - Cloudflare R2 (recomendado): barato, CDN global, S3-compatible
+       - AWS S3: mais caro, mais conhecido
+       - Pasta local /uploads (apenas desenvolvimento)
+    b) Implementar upload no backend:
+       - Adicionar multer ou @aws-sdk/client-s3 ao backend
+       - O endpoint chapters.uploadPages já existe — falta o storage real
+       - Processar imagens com sharp (remover EXIF, converter WebP)
+       - Salvar image_url e image_key na tabela chapter_pages
+    c) Atualizar Reader.tsx:
+       - Ao abrir um capítulo, chamar api.chapters.getChapter(chapterId)
+       - Substituir <PageCanvas> por <img src={page.imageUrl} />
+       - O capítulo retorna: { pages: Array<{pageNumber, imageUrl, width, height}> }
+  DADOS DA TABELA chapter_pages:
+    page_number (int), image_url (text = URL pública), image_key (text = chave S3),
+    width (int?), height (int?), processed_at (timestamp)
+
+  4. BTCPAY SERVER + WEBHOOK DE PAGAMENTO
+  ────────────────────────────────────────
+  SITUAÇÃO: Fatura é criada no banco mas nunca confirmada — BTCPay não existe.
+  O QUE FAZER:
+    a) Instalar BTCPay Server (Docker em VPS separado ou mesmo VPS)
+    b) Criar store → adicionar carteira Monero → gerar API Key
+    c) Configurar .env: BTCPAY_URL, BTCPAY_API_KEY, XMR_WALLET_ADDRESS
+    d) Atualizar backend/routers/payments.ts:
+       - createInvoice: chamar BTCPay API para criar fatura real
+         POST {BTCPAY_URL}/api/v1/stores/{storeId}/invoices
+         Retorna: checkoutLink, btcpayInvoiceId real
+       - checkInvoice: consultar BTCPay API pelo btcpayInvoiceId
+    e) Implementar webhook em backend/src/index.ts:
+       POST /webhooks/btcpay → recebe {"invoiceId": "...", "status": "paid"}
+       → atualiza invoices SET status='paid', paid_at=now()
+       → cria/estende user_subscriptions:
+         Se já existe assinatura ativa → UPDATE end_date += planDays
+         Se não existe → INSERT nova assinatura
+       → marcar sessionId como verificado (para retornar isPremium=true no me())
+  DADOS DA TABELA user_subscriptions:
+    user_id, plan_type ('monthly'|'quarterly'|'annual'), start_date (timestamp),
+    end_date (timestamp), is_active=true, auto_renew=false
+
+  5. VERIFICAÇÃO REAL DE CPF (FonteData) — DESATIVADA TEMPORARIAMENTE
+  ─────────────────────────────────────────────────────────────────────
+  SITUAÇÃO: Verificação de CPF foi COMENTADA em 01/06/2026.
+    O código está intacto mas desativado. Para reativar, remover os
+    comentários marcados com "// CPF VERIFICATION DISABLED" nos arquivos:
+      • src/components/AgeGate.tsx       (componente todo comentado)
+      • src/App.tsx                      (import, tipo Stage, bloco age gate)
+      • src/components/Login.tsx         (checkVerification call)
+      • src/lib/api.ts                   (endpoints verifyCpf e checkVerification)
+      • backend/src/server/routers/auth.ts  (hashCpf, verifyCpf, checkVerification)
+      • backend/drizzle/schema.ts        (tabela cpfVerifications e relations)
+  QUANDO REATIVAR: após contratar FonteData ou similar.
+  O QUE FALTA PARA FUNCIONAR COMPLETAMENTE:
+    - Contratar API FonteData ou similar (serpro.gov.br tem API CPF)
+    - Configurar FONTE_DATA_API_KEY no .env
+    - Em auth.verifyCpf, antes de fazer hash:
+      1. Chamar API FonteData com o CPF limpo
+      2. Receber: { nome, dataNascimento, situacao }
+      3. Calcular idade: (hoje - dataNascimento) >= 18 anos
+      4. Se menor: throw error "CPF não pertence a um maior de 18 anos"
+      5. Se válido: fazer hash e salvar
+    - Nunca logar o CPF em nenhum lugar
+  DADOS RECEBIDOS DA FONTE_DATA:
+    cpf (confirmação), nome (string), data_nascimento (ISO date),
+    situacao ('regular'|'suspenso'|'cancelado'|'nulo'|'falecido')
+
+══════════════════════════════════════════════════════════
+  PRIORIDADE MÉDIA — melhora a experiência do usuário
+══════════════════════════════════════════════════════════
+
+  6. HISTÓRICO DE LEITURA
+  ────────────────────────
+  SITUAÇÃO: Tabela user_history existe mas não é usada. "Continuar lendo"
+    usa IDs hardcoded no App.tsx.
+  O QUE FAZER:
+    Frontend:
+    - Reader.tsx: ao trocar de capítulo, chamar um endpoint que salva o progresso
+      (ou criar endpoint chapters.saveProgress)
+    - App.tsx: substituir continueIds hardcoded por chamada à API
+    Backend — criar endpoint em chapters.ts ou novo router:
+      saveProgress: authedProcedure
+        input: { mangaId, chapterId, currentPage }
+        → upsert em user_history (INSERT ON CONFLICT UPDATE)
+      getHistory: authedProcedure
+        → retorna user_history JOIN mangas ORDER BY last_read_at DESC LIMIT 10
+  DADOS DA TABELA user_history:
+    user_id, manga_id, chapter_id (nullable), current_page, last_read_at
+
+  7. FAVORITOS
+  ─────────────
+  SITUAÇÃO: Tabela user_favorites existe mas não há botão na UI nem endpoint chamado.
+  O QUE FAZER:
+    Backend — adicionar em mangas.ts ou novo router:
+      addFavorite: authedProcedure → INSERT em user_favorites
+      removeFavorite: authedProcedure → DELETE de user_favorites
+      getFavorites: authedProcedure → SELECT user_favorites JOIN mangas
+      isFavorite: authedProcedure → SELECT count de user_favorites
+    Frontend:
+    - Adicionar botão ♡ no card do catálogo e/ou na página do mangá
+    - Estado local de favorito atualizado otimisticamente
+    - Nova aba "Favoritos" no catálogo ou header
+  DADOS DA TABELA user_favorites:
+    user_id, manga_id, created_at [uniqueIndex(user_id, manga_id)]
+
+  8. LEITOR COM DADOS REAIS DO BANCO
+  ───────────────────────────────────
+  SITUAÇÃO: Reader recebe o objeto Manga do App (dados mock). Ao buscar
+    capítulo, não consulta o banco — usa dados já na memória.
+  O QUE FAZER:
+    - Ao clicar em um mangá, buscar chapters completos: api.chapters.getByManga()
+      Retorna: Array<{ id, number, title, pages, released_at, is_premium_only }>
+    - Ao selecionar capítulo, buscar páginas: api.chapters.getChapter(chapterId)
+      Retorna: { ...chapter, pages: Array<{ pageNumber, imageUrl, width, height }> }
+    - Reader.tsx exibir <img src={page.imageUrl}> ao invés de <PageCanvas>
+  PAGINAÇÃO DO LEITOR:
+    Atualmente exibe até 8 páginas (Math.min(active.pages, 8)).
+    Com imagens reais, exibir todas as páginas em scroll vertical.
+
+  9. PAGINAÇÃO NO CATÁLOGO
+  ─────────────────────────
+  SITUAÇÃO: Catálogo busca limit:100 e filtra client-side.
+    Com catálogo grande isso fica pesado.
+  O QUE FAZER:
+    - Passar filtros para a API (type, status, genres, search, sortBy)
+      em vez de filtrar client-side
+    - API já suporta paginação: { page, limit } → { items, total, totalPages }
+    - Adicionar botões Anterior/Próxima ou scroll infinito no Catalog.tsx
+
+  10. RENOVAÇÃO DE SESSÃO
+  ────────────────────────
+  SITUAÇÃO: Sessões expiram silenciosamente após 30 dias.
+  O QUE FAZER:
+    - Em context.ts: se sessão expira em menos de 7 dias, criar nova e retornar
+      no header de resposta ou em um campo do tRPC context
+    - Em api.ts: detectar resposta UNAUTHORIZED → limpar sessão → redirecionar
+      para login (window.location.reload() ou estado de stage)
+
+══════════════════════════════════════════════════════════
+  PRIORIDADE BAIXA — polish e produção
+══════════════════════════════════════════════════════════
+
+  11. EMAILS (Resend)
+  ────────────────────
+  ONDE: backend/src/services/email.ts (criar)
+  TEMPLATES NECESSÁRIOS:
+    - Boas-vindas ao cadastrar (template: 'welcome')
+    - Confirmação de pagamento com recibo (template: 'payment_confirmed')
+    - Aviso de novo capítulo de favorito (template: 'new_chapter')
+    - Lembrete de assinatura expirando em 3 dias (template: 'expiry_reminder')
+  DADOS DISPONÍVEIS NA TABELA email_logs:
+    user_id, to, subject, template, status, error, sent_at
+  CONFIGURAR: RESEND_API_KEY no .env | FROM_EMAIL=noreply@mangareader.com
+
+  12. SISTEMA DE RISCO / ANTI-BOT
+  ─────────────────────────────────
+  SITUAÇÃO: Tabela user_risk_scores existe mas não é populada.
+  O QUE FAZER:
+    - Incrementar score quando: muitas requisições, CPF duplicado tentando
+      se registrar, padrões suspeitos de leitura (scraping)
+    - Bloquear automaticamente quando score >= 80
+    - Integrar com rate limiter
+  DADOS DA TABELA user_risk_scores:
+    user_id, score (0-100), reasons (jsonb array de strings),
+    last_calculated_at, is_blocked
+
+  13. AUDITORIA DE AÇÕES ADMIN
+  ─────────────────────────────
+  SITUAÇÃO: Tabela audit_logs existe mas não é populada.
+  O QUE FAZER:
+    - Em cada adminProcedure (create/update/delete manga, chapter),
+      inserir em audit_logs: { actor_user_id, action, resource, resource_id,
+      changes: {before, after}, ip_address }
+  DADOS DA TABELA audit_logs:
+    actor_user_id, action (string), resource ('manga'|'chapter'|'user'),
+    resource_id (uuid), changes (jsonb {before,after}), ip_address
+
+  14. RATE LIMITING COM REDIS
+  ───────────────────────────
+  SITUAÇÃO: Rate limiter atual usa Map em memória — perde estado ao reiniciar
+    e não funciona com múltiplas instâncias.
+  O QUE FAZER:
+    - Instalar ioredis no backend
+    - Substituir Map por Redis INCR + EXPIRE em server/trpc.ts
+    - REDIS_URL já está no .env e no docker-compose
+  CHAVE REDIS: rate:{ip}:{path} → TTL 60s, max 100
+
+  15. PROCESSAMENTO DE IMAGENS (sharp)
+  ─────────────────────────────────────
+  O QUE FAZER ao fazer upload de página:
+    1. Receber imagem (qualquer formato)
+    2. sharp(buffer).withMetadata(false) → remove EXIF
+    3. .webp({ quality: 85 }) → converte para WebP
+    4. .resize({ width: 1200, withoutEnlargement: true }) → limita tamanho
+    5. Upload do resultado para S3/R2
+    6. Marcar processed_at = now() na tabela chapter_pages
+
+  16. PROTEÇÃO DE ROTAS ADMIN
+  ────────────────────────────
+  SITUAÇÃO: Admin check é feito por email hardcoded em context.ts:
+    userRecord.email === "eron98928@gmail.com"
+  O QUE FAZER:
+    - Adicionar coluna is_admin boolean DEFAULT false na tabela users
+    - Atualizar context.ts para usar userRecord.isAdmin
+    - Criar migration ou UPDATE manual para o usuário admin
+    - Remover email hardcoded
+
+  17. NOTIFICAÇÕES DE NOVO CAPÍTULO
+  ───────────────────────────────────
+  SITUAÇÃO: Tabela user_notification_preferences existe mas não é usada.
+  O QUE FAZER:
+    - Quando um novo capítulo é criado via adminProcedure:
+      1. Buscar todos os usuários que têm aquele mangá nos favoritos
+      2. Filtrar os que têm email_new_chapters = true
+      3. Enfileirar envio de email (via Resend ou fila BullMQ)
+
+  18. HTTPS / DEPLOY EM VPS
+  ──────────────────────────
+  O QUE FAZER:
+    a) Comprar/alugar VPS offshore (Mullvad Servers, Njalla, 1984 hosting)
+    b) Instalar Docker + Docker Compose
+    c) Configurar docker-compose.yml com variáveis de produção
+    d) Apontar domínio → Nginx como reverse proxy
+       /            → frontend (porta 5173 ou servir dist/)
+       /trpc        → backend (porta 3000)
+       /webhooks    → backend (porta 3000)
+       :437         → BTCPay Server
+    e) Certificado SSL via Let's Encrypt (certbot ou caddy)
+    f) Substituir senhas do .env por valores fortes (openssl rand -hex 32)
+    g) NODE_ENV=production → Express otimiza, logs reduzidos
+
+
+────────────────────────────────────────────────────────────────────────────────
+  SENHAS E CREDENCIAIS (APENAS DESENVOLVIMENTO LOCAL)
+────────────────────────────────────────────────────────────────────────────────
+
+  PostgreSQL (superuser postgres):   manga2024
+  PostgreSQL (usuário mangareader):  manga2024
+  Admin da plataforma:               eron98928@gmail.com / 12062024
+
+  ⚠️  TROCAR TUDO antes de qualquer deploy em produção.
+  ⚠️  Nunca commitar o arquivo backend/.env no git.
+  ⚠️  Adicionar .env ao .gitignore se ainda não estiver.
+
+
+────────────────────────────────────────────────────────────────────────────────
+  RESUMO RÁPIDO — PRÓXIMOS PASSOS RECOMENDADOS
+────────────────────────────────────────────────────────────────────────────────
+
+  SEMANA 1:  Conectar admin à API (item 1) + seed do banco (item 2)
+             → Resultado: catálogo real com dados reais navegáveis
+
+  SEMANA 2:  Integrar storage de imagens (item 3) + Reader com imagens reais (item 8)
+             → Resultado: leitura funcional com conteúdo visual
+
+  SEMANA 3:  BTCPay + webhook (item 4) + ativar assinatura no banco
+             → Resultado: pagamentos Monero reais funcionando end-to-end
+
+  SEMANA 4:  Histórico (item 6) + Favoritos (item 7) + Emails (item 11)
+             → Resultado: experiência de usuário completa
+
+  DEPLOY:    Após semana 3 estar estável → VPS offshore + HTTPS (item 18)
+
+
+────────────────────────────────────────────────────────────────────────────────
+  HISTÓRICO DE MUDANÇAS
+────────────────────────────────────────────────────────────────────────────────
+
+  [01/06/2026] — Verificação de CPF desativada temporariamente
+    Motivo: integração com FonteData ainda não contratada; CPF bloqueava
+    o fluxo de login sem necessidade imediata.
+    O que foi comentado (marcado com "// CPF VERIFICATION DISABLED"):
+      - AgeGate.tsx: componente de modal de CPF inteiro
+      - App.tsx: import AgeGate, tipo "age" do Stage, bloco if(age)
+      - Login.tsx: chamada checkVerification; onAuth sempre passa true
+      - api.ts: endpoints verifyCpf e checkVerification
+      - backend/auth.ts: hashCpf(), verifyCpf, checkVerification procedures
+      - backend/schema.ts: tabela cpfVerifications, relações
+    Efeito: login vai direto para app, sem pedido de CPF.
+    Para reativar: ver item 5 da seção "O QUE FALTA".
+
+  [30/05/2026] — Versão inicial
+    Estrutura completa do projeto: frontend React + backend tRPC +
+    schema PostgreSQL + painel admin mock + leitor de mangás.
+
+================================================================================

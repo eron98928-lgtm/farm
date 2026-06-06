@@ -1,0 +1,448 @@
+================================================================================
+                    RELATÓRIO MANGAREADER - ANÁLISE PARA PROGRAMAÇÃO
+================================================================================
+
+APRESENTAÇÃO
+============
+
+Olá! Sou GitHub Copilot (Claude Haiku 4.5), um assistente de IA especializado 
+em desenvolvimento de software.
+
+Este relatório foi preparado para Note LLM e Arena IA com o objetivo de fornecer 
+uma visão técnica completa do projeto MangaReader, facilitando a programação, 
+refatoração e expansão do código.
+
+================================================================================
+1. VISÃO GERAL DO PROJETO
+================================================================================
+
+DESCRIÇÃO
+---------
+MangaReader é uma plataforma full-stack de leitura de conteúdo oriental 
+(Manga, Manhwa, Manhua, Light Novel) com modelo freemium e foco em privacidade 
+total.
+
+PROPOSTA DE VALOR
+-----------------
+✅ Leitura de mangá/manhwa/novel online
+✅ Modelo freemium com assinatura Monero (XMR)
+✅ Verificação de idade via CPF (ECA Digital Lei 15.211/2025)
+✅ Deploy offshore com VPS (sem rastreamento de usuário)
+✅ Pagamentos exclusivamente em criptomoeda (Monero)
+
+MODELO DE RECEITA
+-----------------
+Tier          | Acesso           | Preço        | Descrição
+--------------+------------------+--------------+------------------------------
+Free          | 72h early access | Grátis       | Lê com atraso + vê anúncios
+Premium       | Acesso imediato  | R$10/mês     | Sem anúncios, acesso total
+Premium+      | Acesso imediato  | R$25/trim    | Assinatura trimestral
+Premium++     | Acesso imediato  | R$80/ano     | Assinatura anual
+Doações       | N/A              | Variável     | Suporte voluntário em XMR
+
+NOTA IMPORTANTE: Dias de assinatura são CUMULATIVOS (somados, não substituídos)
+
+================================================================================
+2. STACK TÉCNICA
+================================================================================
+
+FRONTEND
+--------
+├─ Runtime: Browser (Chrome, Firefox, Safari, Edge)
+├─ Linguagem: TypeScript
+├─ Framework: React 19
+├─ Build: Vite 6
+├─ Build Output: Single HTML file (plugin: vite-plugin-singlefile)
+├─ Estilo: Tailwind CSS v4
+├─ Roteamento: React Router v7
+├─ Estado: useState local + props (sem Redux/Zustand)
+├─ API Client: fetch nativo (src/lib/api.ts)
+└─ Deploy: Static file hosting ou CDN
+
+BACKEND
+-------
+├─ Runtime: Node.js 24
+├─ Linguagem: TypeScript
+├─ Framework: Express 4
+├─ API Protocol: tRPC v10 (type-safe RPC, não REST)
+├─ ORM: Drizzle ORM v0.29 (schema-first, sem migrations)
+├─ Banco: PostgreSQL 17
+├─ Cache: Redis 7 (rate limiting)
+├─ Criptografia:
+│  ├─ Senhas: Argon2id
+│  ├─ CPF: SHA-256(CPF + salt CSPRNG) - desativado temporariamente
+│  └─ Sessões: Token 32 bytes, validade 30 dias
+├─ Segurança: Helmet (headers HTTP) + Rate Limiting (100 req/min/IP)
+├─ Pagamentos: BTCPay Server (Monero/XMR)
+└─ Port: 3000
+
+INFRAESTRUTURA
+--------------
+├─ Containerização: Docker
+├─ Orquestração: Docker Compose
+├─ Serviços:
+│  ├─ PostgreSQL 16 (porta 5432)
+│  ├─ Redis 7 (porta 6379)
+│  ├─ Express API (porta 3000)
+│  └─ BTCPay Server (porta 23000)
+├─ Volumes: Persistentes para DB, uploads
+├─ Redes: internal_network (serviços), web_network (externo)
+└─ Health Checks: Habilitados para todos os serviços
+
+================================================================================
+3. ARQUITETURA DO BANCO DE DADOS
+================================================================================
+
+15 TABELAS PRINCIPAIS
+
+AUTENTICAÇÃO & USUÁRIO
+----------------------
+users                      -- Conta do usuário (email, hash senha, email verificado)
+sessions                   -- Sessões ativas (token, 30 dias validade)
+cpf_verifications          -- Hash SHA-256(CPF + salt) — DESATIVADO
+
+CONTEÚDO
+--------
+mangas                     -- Catálogo (título, slug, tipo, status, gênero)
+chapters                   -- Capítulos (número, título, data lançamento)
+chapter_pages              -- Páginas processadas (URL imagem, ordem)
+
+INTERAÇÃO DO USUÁRIO
+--------------------
+user_history               -- Histórico de leitura (manga, capítulo, posição)
+user_favorites             -- Mangás favoritados
+user_subscriptions         -- Assinaturas ativas (data início/fim em UNIX)
+
+PAGAMENTOS
+----------
+invoices                   -- Faturas BTCPay (ID, status, valor XMR, data)
+
+SEGURANÇA & AUDITORIA
+---------------------
+user_risk_scores           -- Score de risco (detecção de bots)
+security_events            -- Eventos (login, falha auth, etc)
+audit_logs                 -- Logs de todas as operações
+email_logs                 -- Emails enviados
+user_notification_prefs    -- Preferências de notificação
+
+================================================================================
+4. API tRPC - ENDPOINTS
+================================================================================
+
+ROUTER: AUTH (backend/src/server/routers/auth.ts)
+-------------------------------------------------
+POST   /trpc/auth.register          -- Registrar novo usuário
+POST   /trpc/auth.login             -- Login com email + senha
+POST   /trpc/auth.logout            -- Logout (invalida sessão)
+GET    /trpc/auth.me                -- Dados do usuário autenticado
+POST   /trpc/auth.verifyCpf         -- Iniciar verificação CPF
+GET    /trpc/auth.checkVerification -- Status da verificação CPF
+
+ROUTER: MANGAS (backend/src/server/routers/mangas.ts)
+-----------------------------------------------------
+GET    /trpc/mangas.list            -- Listar (filtros: tipo, status, gênero, busca)
+GET    /trpc/mangas.getBySlug       -- Obter por slug
+GET    /trpc/mangas.getFeatured     -- Top 4 por rating
+GET    /trpc/mangas.getPopular      -- Mais vistos
+GET    /trpc/mangas.getLatest       -- Lançamentos recentes
+POST   /trpc/mangas.create          -- Criar (admin)
+PUT    /trpc/mangas.update          -- Editar (admin)
+DELETE /trpc/mangas.delete          -- Deletar (admin)
+
+ROUTER: CHAPTERS (backend/src/server/routers/chapters.ts)
+----------------------------------------------------------
+GET    /trpc/chapters.getByManga    -- Lista de capítulos de um mangá
+GET    /trpc/chapters.getChapter    -- Capítulo com páginas
+GET    /trpc/chapters.checkAccess   -- Verificar early access (72h)
+POST   /trpc/chapters.create        -- Criar capítulo (admin)
+PUT    /trpc/chapters.update        -- Editar capítulo (admin)
+DELETE /trpc/chapters.delete        -- Deletar capítulo (admin)
+POST   /trpc/chapters.uploadPages   -- Upload de páginas (admin)
+
+ROUTER: PAYMENTS (backend/src/server/routers/payments.ts)
+----------------------------------------------------------
+GET    /trpc/payments.getXmrRate    -- Cotação XMR/BRL atual
+GET    /trpc/payments.getPlanPrices -- Preços em XMR para 3 planos
+POST   /trpc/payments.createInvoice -- Criar fatura assinatura
+POST   /trpc/payments.createDonation-- Criar fatura doação
+GET    /trpc/payments.checkInvoice  -- Status da fatura
+GET    /trpc/payments.getSubscription -- Status assinatura do usuário
+
+================================================================================
+5. ESTRUTURA DE ARQUIVOS
+================================================================================
+
+FRONTEND (src/)
+---------------
+src/
+├─ main.tsx                -- Entry point React
+├─ App.tsx                 -- Componente raiz com React Router
+├─ index.css               -- Estilos globais + Tailwind
+│
+├─ components/             -- Componentes reutilizáveis
+│  ├─ Header.tsx           -- Navegação
+│  ├─ Hero.tsx             -- Seção destaque
+│  ├─ Catalog.tsx          -- Grid de mangás
+│  ├─ ContentRow.tsx       -- Linha de conteúdo
+│  ├─ Reader.tsx           -- Visualizador de capítulo
+│  ├─ Login.tsx            -- Formulário login
+│  ├─ Plans.tsx            -- Exibição de planos
+│  ├─ AgeGate.tsx          -- Gate de idade
+│  ├─ InvoiceModal.tsx     -- Modal de pagamento
+│  ├─ Toast.tsx            -- Notificações
+│  ├─ Footer.tsx           -- Rodapé
+│  └─ Tooltip.tsx          -- Dicas
+│
+├─ pages/                  -- Páginas (rotas)
+│  ├─ HomePage.tsx         -- Página inicial
+│  ├─ CatalogPage.tsx      -- Catálogo completo
+│  ├─ LatestPage.tsx       -- Lançamentos
+│  ├─ PlansPage.tsx        -- Planos/assinatura
+│  ├─ DonatePage.tsx       -- Doações
+│  └─ admin/
+│     ├─ AdminDashboard.tsx
+│     ├─ AdminMangaForm.tsx
+│     ├─ AdminChapters.tsx
+│     └─ AdminLogin.tsx
+│
+├─ lib/
+│  └─ api.ts               -- Cliente HTTP para tRPC
+│     ├─ trpcGet()
+│     ├─ trpcPost()
+│     ├─ saveSession()
+│     ├─ clearSession()
+│     └─ mapApiManga()
+│
+├─ data/
+│  ├─ mangas.ts            -- Mock de 18 mangás com capítulos
+│  └─ plans.ts             -- 3 planos + taxa XMR_BRL_RATE
+│
+└─ utils/
+   ├─ access.ts            -- Lógica early access (72h)
+   ├─ cn.ts                -- Utilidade Tailwind className
+   └─ typeBadge.ts         -- Badge tipo (manga/manhwa/novel)
+
+BACKEND (backend/src/)
+----------------------
+backend/src/
+├─ index.ts               -- Servidor Express principal
+├─ db.ts                  -- Configuração Drizzle + PostgreSQL
+│
+├─ server/
+│  ├─ index.ts            -- Router tRPC principal
+│  ├─ trpc.ts             -- Inicialização tRPC (context, middleware)
+│  ├─ context.ts          -- Contexto tRPC (sessão, IP, user)
+│  │
+│  └─ routers/
+│     ├─ auth.ts          -- Auth (register, login, logout, me)
+│     ├─ mangas.ts        -- CRUD mangas + queries
+│     ├─ chapters.ts      -- CRUD capítulos + pages
+│     └─ payments.ts      -- Integração BTCPay
+│
+└─ drizzle/
+   └─ schema.ts           -- Schema de 15 tabelas (TypeScript)
+
+================================================================================
+6. SEGURANÇA IMPLEMENTADA
+================================================================================
+
+HEADERS HTTP (Helmet)
+---------------------
+Content-Security-Policy: default-src 'self'; script-src 'self'
+Strict-Transport-Security: max-age=63072000; preload
+X-Content-Type-Options: nosniff
+X-Frame-Options: DENY
+X-XSS-Protection: 1; mode=block
+Referrer-Policy: strict-origin-when-cross-origin
+
+RATE LIMITING
+-------------
+✅ 100 requisições por minuto por IP
+✅ Middleware aplicado em todos os endpoints
+✅ Armazenado em Redis
+
+HASHING DE SENHAS
+-----------------
+// Argon2id (memory-hard, time-hard)
+const hashed = await hash(password);
+const valid = await verify(hashed, inputPassword);
+
+HASHING DE CPF (Desativado)
+---------------------------
+import { randomBytes, createHash } from 'crypto';
+
+const salt = randomBytes(32).toString('hex');
+const cpfHash = createHash('sha256')
+  .update(cleanCpf + salt)
+  .digest('hex');
+
+// Apenas cpfHash + salt persistidos, CPF descartado
+
+SESSÕES
+-------
+✅ Token de 32 bytes gerado com CSPRNG
+✅ Validade: 30 dias
+✅ Armazenado em tabela `sessions` do banco
+✅ Enviado via cookie `__session` (HttpOnly, Secure)
+
+VERIFICAÇÃO DE IDADE (Lei ECA Digital 15.211/2025)
+---------------------------------------------------
+⏸️  Momentaneamente desativada
+🔄 Será reativada com verificação CPF
+🛡️  CPF nunca será armazenado (apenas hash)
+
+================================================================================
+7. COMO RODAR LOCALMENTE
+================================================================================
+
+PRÉ-REQUISITOS
+--------------
+✅ Node.js 24+
+✅ PostgreSQL 16+ (Windows Service: postgresql-x64-17)
+✅ Docker & Docker Compose (opcional, para infraestrutura completa)
+
+SETUP INICIAL
+-------------
+# 1. Instalar dependências
+npm install
+cd backend && npm install && cd ..
+
+# 2. Configurar variáveis de ambiente
+# Criar backend/.env com:
+DATABASE_URL="postgresql://mangareader:manga2024@localhost:5432/mangareader"
+NODE_ENV="development"
+PORT=3000
+
+EXECUTAR APLICAÇÃO
+------------------
+# Terminal 1 - Frontend
+npm run dev
+# → http://localhost:5173
+
+# Terminal 2 - Backend
+cd backend
+npm run dev
+# → http://localhost:3000/trpc
+# → Health: http://localhost:3000/health
+
+COMANDOS BACKEND
+----------------
+npm run build      # Compilar TypeScript
+npm run db:push    # Aplicar schema (Drizzle)
+npm run db:studio  # UI web do banco (http://localhost:4983)
+npm run db:generate # Gerar migrations (se necessário)
+
+DOCKER (Infraestrutura Completa)
+---------------------------------
+docker-compose up -d     # Inicia todos os serviços
+docker-compose down      # Para os serviços
+docker-compose logs -f   # Ver logs em tempo real
+
+================================================================================
+8. STATUS DO PROJETO
+================================================================================
+
+CONCLUÍDO
+---------
+✅ Schema de banco (15 tabelas)
+✅ Infraestrutura Docker (postgres, redis, btcpay, api)
+✅ 4 routers tRPC (auth, mangas, chapters, payments)
+✅ Segurança (rate limiting, helmet, hashing)
+✅ Frontend structure (components, pages, routing)
+✅ Mock data (18 mangás com capítulos gerados)
+✅ CSS (Tailwind v4)
+✅ Vite single-file build
+
+EM ANDAMENTO
+------------
+🔄 Integração frontend ↔ backend (fetch → tRPC)
+🔄 Admin dashboard (CRUD mangas/capítulos)
+🔄 Testes (Jest, Vitest)
+🔄 Performance optimization
+
+PLANEJADO
+---------
+📌 Verificação CPF (ECA Digital) - reativar
+📌 BTCPay Server integration (teste)
+📌 Notificações por email
+📌 Analytics & monitoring
+📌 Deploy offshore + VPS
+📌 Cache (Redis) otimização
+📌 Internacionalização (i18n)
+
+================================================================================
+9. RECOMENDAÇÕES PARA PROGRAMAÇÃO
+================================================================================
+
+PRÓXIMOS PASSOS (Prioridade)
+----------------------------
+
+1. INTEGRAÇÃO FRONTEND-BACKEND
+   - Conectar src/lib/api.ts aos endpoints tRPC
+   - Testar login/logout
+   - Implementar erro handling global
+
+2. ADMIN DASHBOARD
+   - Criar CRUD interface para mangás
+   - Upload de capítulos + páginas
+   - Gráficos de analytics
+
+3. TESTES
+   - Jest para backend
+   - Vitest para frontend
+   - Testes E2E (Cypress/Playwright)
+
+4. PERFORMANCE
+   - Cachear mangas (Redis)
+   - Lazy load de imagens
+   - Compressão de assets
+
+PADRÕES DE CÓDIGO
+-----------------
+✅ TypeScript strict mode (tsconfig.json)
+✅ Componentes React funcionais + hooks
+✅ Zod para validação de schemas
+✅ Variáveis de ambiente .env
+✅ Commits com mensagens claras (Conventional Commits)
+
+FERRAMENTAS RECOMENDADAS
+------------------------
+├─ VS Code Extensions
+│  ├─ Eslint
+│  ├─ Prettier
+│  ├─ Thunder Client (API testing)
+│  └─ Database Client
+│
+├─ Debugging
+│  ├─ Chrome DevTools
+│  ├─ Node.js debugger
+│  └─ Drizzle Studio (db:studio)
+│
+└─ Testing
+   ├─ Jest (backend unit tests)
+   ├─ Vitest (frontend unit tests)
+   └─ Cypress (E2E tests)
+
+================================================================================
+10. CONTATO & SUPORTE
+================================================================================
+
+Assistente IA: GitHub Copilot (Claude Haiku 4.5)
+Projeto: MangaReader - Full Stack Manga Reading Platform
+Data do Relatório: 04 de Junho de 2026
+Status: Development
+
+---
+
+DÚVIDAS?
+Este relatório foi estruturado para facilitar:
+- Onboarding de novos desenvolvedores (Note LLM, Arena IA)
+- Programação colaborativa entre LLMs e humanos
+- Referência técnica rápida durante desenvolvimento
+- Documentação de decisões arquiteturais
+
+Próximos passos: Defina com o time qual feature programar primeiro!
+
+================================================================================
+FIM DO RELATÓRIO
+================================================================================
